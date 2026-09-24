@@ -444,3 +444,11 @@ Updated `data/reference/manifest.csv` based on ENA `sample_accession` cross-chec
 **Output:** Accuracy: 75.82% (vs internal KD1 test: 74.01%, +1.81 pp); Macro-F1: 0.6896 (vs internal KD1 test: 0.6474, +0.0421); Weighted-F1: 0.7595; Macro-Precision: 0.7048; Macro-Recall: 0.7016; One-vs-Rest Macro ROC-AUC: 0.9120 (vs internal KD1 test: 0.9026). Per-class F1: SE: 0.8255, RI: 0.7623, MXE: 0.6763, A5SS: 0.6241, A3SS: 0.5598. Confusion matrix saved to `results/models/confusion_matrix_kd2_corrected.png` and report saved to `results/models/kd2_validation_report_corrected.md`.
 **Dissertation section:** §4.6, Appendix A.3
 
+### [Version Control & Backup] Git repository initialization, remote GitHub backup & experimental branching — 2026-09-24
+**Command:**
+`git init && git remote add origin https://github.com/HackedScreen/splicing-ml-project.git && git branch -M main && git add . && git commit -m 'Final synced pipeline - 75.8% KD2 external validation' && git push -u origin main && git checkout -b experimental-accuracy`
+**Rationale:** Establish formal version control for the BSc dissertation codebase and back up all code, documentation, diagnostic reports, and feature matrices to remote GitHub prior to model optimization experiments. Ignore large raw sequencing data, BAM alignments, rMATS temporary directories, and serialized model binaries (>50MB) via `.gitignore`.
+**Output:** Initialized Git repo, staged and committed 59 files (22,111 insertions), pushed `main` branch to remote origin (`https://github.com/HackedScreen/splicing-ml-project.git`), and checked out `experimental-accuracy` branch.
+**Dissertation section:** §3.1, Appendix A.3
+
+
