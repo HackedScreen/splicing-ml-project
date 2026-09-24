@@ -1,0 +1,15 @@
+TrimmomaticPE: Started with arguments:
+ -threads 4 -phred33 /home/brooklyn/splicing-ml-project/data/raw/ERR127303_1.fastq.gz /home/brooklyn/splicing-ml-project/data/raw/ERR127303_2.fastq.gz /home/brooklyn/splicing-ml-project/data/trimmed/ERR127303_1_paired.fastq.gz /home/brooklyn/splicing-ml-project/data/trimmed/ERR127303_1_unpaired.fastq.gz /home/brooklyn/splicing-ml-project/data/trimmed/ERR127303_2_paired.fastq.gz /home/brooklyn/splicing-ml-project/data/trimmed/ERR127303_2_unpaired.fastq.gz ILLUMINACLIP:/home/brooklyn/miniforge3/envs/splicing_project/share/trimmomatic/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+ILLUMINACLIP: Using adapter file from user-specified absolute path: /home/brooklyn/miniforge3/envs/splicing_project/share/trimmomatic/adapters/TruSeq3-PE.fa
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Exception in thread "main" java.lang.Exception: Parser Exception
+	at org.usadellab.trimmomatic.threading.parser.SelfThreadedParser.run(SelfThreadedParser.java:55)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+Caused by: java.lang.RuntimeException: Sequence and quality length don't match: 'CGTAGGTTTGGTCTAGGGTGTAGCCTGAGAATAGGGGAAATCAGTGAATGAAGCCTCCTATGATGGCAAATATGAGTAGGGGAAGGGAGCCTACTAGGGTGTAGAATAG' vs 'GGHHHHHHHHHHEHHFFDAFEBEEBDGGGGFG@GDGGBGGEGGGGEEGGGEGGEEDEEDGDG@BB#######'
+	at org.usadellab.trimmomatic.fastq.FastqRecord.<init>(FastqRecord.java:35)
+	at org.usadellab.trimmomatic.fastq.FastqParser.parseOne(FastqParser.java:83)
+	at org.usadellab.trimmomatic.fastq.FastqParser.next(FastqParser.java:152)
+	at org.usadellab.trimmomatic.threading.parser.Parser.parseBlock(Parser.java:47)
+	at org.usadellab.trimmomatic.threading.parser.SelfThreadedParser.run(SelfThreadedParser.java:51)
+	... 1 more

@@ -1,0 +1,7 @@
+TrimmomaticPE: Started with arguments:
+ -threads 4 -phred33 /home/brooklyn/splicing-ml-project/data/raw/ERR127305_1.fastq.gz /home/brooklyn/splicing-ml-project/data/raw/ERR127305_2.fastq.gz /home/brooklyn/splicing-ml-project/data/trimmed/ERR127305_1_paired.fastq.gz /home/brooklyn/splicing-ml-project/data/trimmed/ERR127305_1_unpaired.fastq.gz /home/brooklyn/splicing-ml-project/data/trimmed/ERR127305_2_paired.fastq.gz /home/brooklyn/splicing-ml-project/data/trimmed/ERR127305_2_unpaired.fastq.gz ILLUMINACLIP:/home/brooklyn/miniforge3/envs/splicing_project/share/trimmomatic/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+ILLUMINACLIP: Using adapter file from user-specified absolute path: /home/brooklyn/miniforge3/envs/splicing_project/share/trimmomatic/adapters/TruSeq3-PE.fa
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 32345742 Both Surviving: 28042418 (86.70%) Forward Only Surviving: 2772429 (8.57%) Reverse Only Surviving: 1025964 (3.17%) Dropped: 504931 (1.56%)
+TrimmomaticPE: Completed successfully

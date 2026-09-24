@@ -1,0 +1,26 @@
+# Massive genomic data directories
+data/raw/
+data/trimmed/
+data/reference/
+data/test_subset/
+
+# Alignments and differential splicing outputs
+results/alignment/
+results/splicing*/
+
+# Binary genomic, alignment, and index files
+*.bam
+*.bai
+*.fastq.gz
+*.ht2
+*.sam
+
+# Serialized model and data binary artifacts (>50MB / GitHub limits)
+*.joblib
+
+# Python caches and notebook checkpoints
+__pycache__/
+.ipynb_checkpoints/
+
+# Download logs
+wget-log*
