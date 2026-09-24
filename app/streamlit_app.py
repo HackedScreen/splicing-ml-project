@@ -3,7 +3,7 @@ app/streamlit_app.py
 
 Interactive Alternative Splicing Classification App
 BSc Dissertation Project: Machine Learning Classification of RNA Splicing Events
-Model: Random Forest Classifier (Robust 19-Feature Architecture)
+Model: Random Forest V2 Classifier (Biological 23-Feature Architecture with HNRNPC U-Tract Motifs)
 Dataset: HNRNPC Knockdown vs Control in HeLa Cells (ArrayExpress E-MTAB-1147)
 """
 
@@ -25,12 +25,16 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Define expected features and mappings
+# Define expected features and mappings (23 Features: 21 numeric + 2 strand dummies)
 ROBUST_NUMERIC_FEATURES = [
     "exon_length",
     "gc_exon",
     "gc_upstream_100bp",
     "gc_downstream_100bp",
+    "max_utract_length_upstream",
+    "max_utract_length_downstream",
+    "u_fraction_upstream",
+    "u_fraction_downstream",
     "score_5ss_donor",
     "score_3ss_acceptor",
     "cov_mean_control",
@@ -70,17 +74,17 @@ CLASS_COLORS = {
 @st.cache_resource
 def load_robust_model():
     candidates = [
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "models", "random_forest_v2.joblib"),
+        os.path.expanduser("~/splicing-ml-project/results/models/random_forest_v2.joblib"),
+        "results/models/random_forest_v2.joblib",
         os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "models", "random_forest_corrected.joblib"),
         os.path.expanduser("~/splicing-ml-project/results/models/random_forest_corrected.joblib"),
-        "results/models/random_forest_corrected.joblib",
-        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "models", "random_forest_robust.joblib"),
-        os.path.expanduser("~/splicing-ml-project/results/models/random_forest_robust.joblib"),
-        "results/models/random_forest_robust.joblib"
+        "results/models/random_forest_corrected.joblib"
     ]
     for path in candidates:
         if os.path.exists(path):
             return joblib.load(path), path
-    raise FileNotFoundError("Could not locate random_forest_corrected.joblib or random_forest_robust.joblib")
+    raise FileNotFoundError("Could not locate random_forest_v2.joblib or random_forest_corrected.joblib")
 
 try:
     model, model_path = load_robust_model()
@@ -95,32 +99,41 @@ except Exception as e:
 with st.sidebar:
     st.image("https://img.icons8.com/fluency/96/dna-helix.png", width=64)
     st.title("Splicing ML Classifier")
-    st.markdown("**Version:** 1.0 (Robust 19-Feature)")
-    st.markdown("**Primary Model:** `Random Forest Ensemble`")
+    st.markdown("**Version:** 2.0 (Biological 23-Feature Architecture)")
+    st.markdown("**Primary Model:** `Random Forest V2 Ensemble`")
     
     st.markdown("---")
-    st.subheader("📊 Held-Out Test Metrics")
+    st.subheader("📊 Internal KD1 Test Metrics ($N=1,739$)")
     col_m1, col_m2 = st.columns(2)
     with col_m1:
-        st.metric(label="Accuracy", value="74.01%")
-        st.metric(label="Macro-F1", value="0.6474")
+        st.metric(label="Accuracy", value="74.81%", delta="+0.80 pp")
+        st.metric(label="Macro-F1", value="0.6611", delta="+0.0137")
     with col_m2:
-        st.metric(label="ROC-AUC", value="0.9026")
-        st.metric(label="Test Size", value="1,739")
+        st.metric(label="ROC-AUC", value="0.9077", delta="+0.0051")
+        st.metric(label="Weighted-F1", value="0.7450")
 
     st.markdown("---")
-    st.subheader("🔬 Dataset Scope")
+    st.subheader("🌐 External KD2 Validation ($N=7,080$)")
+    col_k1, col_k2 = st.columns(2)
+    with col_k1:
+        st.metric(label="KD2 Accuracy", value="76.82%", delta="+1.00 pp")
+        st.metric(label="KD2 Macro-F1", value="0.7003", delta="+0.0107")
+    with col_k2:
+        st.metric(label="KD2 ROC-AUC", value="0.9180", delta="+0.0060")
+        st.metric(label="KD2 Weighted-F1", value="0.7698")
+
+    st.markdown("---")
+    st.subheader("🔬 Dataset Scope & Mechanism")
     st.info(
         "**Biological Context:**\n\n"
-        "HNRNPC knockdown (KD1) vs. Control, HeLa cells (*ArrayExpress E-MTAB-1147* / *Zarnack et al., 2013*).\n\n"
-        "Quantified across 8,693 significant alternative splicing events ($FDR < 0.05$) under depth parity."
+        "HNRNPC knockdown vs. Control, HeLa cells (*ArrayExpress E-MTAB-1147* / *Zarnack et al., 2013*).\n\n"
+        "Augmented with **HNRNPC U-tract binding motif density** in 100 bp flanking splice windows, capturing genuine competitive repression against U2AF65."
     )
 
     st.markdown("---")
     st.warning(
         "⚠️ **Caution on Multi-Class Boundaries**:\n\n"
-        "Trained on depth-balanced Control vs KD1. "
-        "Alternative splice sites (A5SS, 48% F1; A3SS, 50% F1) show higher boundary ambiguity than Skipped Exons (SE, 79% F1) and Mutually Exclusive Exons (MXE, 76% F1)."
+        "Alternative splice sites (A5SS, 50% F1; A3SS, 52% F1) show higher boundary ambiguity than Skipped Exons (SE, 80% F1) and Mutually Exclusive Exons (MXE, 77% F1)."
     )
 
     st.caption("BSc Dissertation Project Pipeline • §3–§4 Deployment Demonstration")
@@ -131,7 +144,7 @@ with st.sidebar:
 st.title("🧬 RNA Alternative Splicing Event Classifier")
 st.markdown(
     "Predict the molecular type of human alternative splicing events (`SE`, `RI`, `A5SS`, `A3SS`, `MXE`) "
-    "from sequence composition, splice site consensus strengths, local RNA-seq read coverage, and $\\Psi$ (PSI) kinetics."
+    "from sequence composition, HNRNPC U-tract binding motifs, splice site consensus strengths, local RNA-seq read coverage, and $\\Psi$ (PSI) kinetics."
 )
 
 tab1, tab2 = st.tabs(["📁 Batch Predict (CSV)", "🔍 Single Event Explorer"])
@@ -142,7 +155,7 @@ tab1, tab2 = st.tabs(["📁 Batch Predict (CSV)", "🔍 Single Event Explorer"])
 with tab1:
     st.subheader("Batch Prediction from CSV File")
     st.markdown(
-        "Upload a CSV file containing event feature measurements. The model expects 17 numeric features plus the `strand` (`+` or `-`)."
+        "Upload a CSV file containing event feature measurements. The model expects 21 numeric features plus the `strand` (`+` or `-`)."
     )
 
     # Template generation
@@ -151,6 +164,10 @@ with tab1:
         "gc_exon": [0.505],
         "gc_upstream_100bp": [0.44],
         "gc_downstream_100bp": [0.44],
+        "max_utract_length_upstream": [6],
+        "max_utract_length_downstream": [4],
+        "u_fraction_upstream": [0.34],
+        "u_fraction_downstream": [0.30],
         "score_5ss_donor": [4.20],
         "score_3ss_acceptor": [6.22],
         "cov_mean_control": [16.5],
@@ -172,7 +189,7 @@ with tab1:
     st.download_button(
         label="📥 Download Template CSV (Headers + 1 Example Row)",
         data=csv_template_bytes,
-        file_name="splicing_features_template.csv",
+        file_name="splicing_features_v2_template.csv",
         mime="text/csv"
     )
 
@@ -222,7 +239,7 @@ with tab1:
                 if ri_predicted_count > 0:
                     st.warning(
                         f"⚠️ **Note**: **{ri_predicted_count}** of the {len(results_df)} events were classified as **Retained Intron (RI)**. "
-                        f"RI predictions exhibit an empirical 71% F1 (vs 76–79% for SE and MXE) due to sequence similarity with continuous coding sequence. "
+                        f"RI predictions exhibit an empirical ~73% F1 (vs 77–80% for SE and MXE) due to sequence similarity with continuous coding sequence. "
                         f"Please verify these loci with independent read-density inspection."
                     )
 
@@ -252,31 +269,38 @@ with tab1:
 with tab2:
     st.subheader("Single Alternative Splicing Event Explorer")
     st.markdown(
-        "Adjust sequence, structural, coverage, and replicate $\\Psi$ parameters to evaluate how the Random Forest model "
+        "Adjust sequence, structural, HNRNPC U-tract motif, coverage, and replicate $\\Psi$ parameters to evaluate how the Random Forest model "
         "classifies the splicing event."
     )
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.markdown("#### 📏 Exon Geometry & Splice Sites")
+        st.markdown("#### 📏 Geometry & Splice Sites")
         exon_len = st.number_input("Exon length (bp)", min_value=1, max_value=20000, value=118, step=1)
-        score_5ss = st.slider("5' Splice Site (Donor) PWM Score", min_value=-16.0, max_value=9.0, value=4.20, step=0.1)
-        score_3ss = st.slider("3' Splice Site (Acceptor) PWM Score", min_value=-16.5, max_value=11.5, value=6.22, step=0.1)
+        score_5ss = st.slider("5' Splice Site (Donor) PWM", min_value=-16.0, max_value=9.0, value=4.20, step=0.1)
+        score_3ss = st.slider("3' Splice Site (Acceptor) PWM", min_value=-16.5, max_value=11.5, value=6.22, step=0.1)
         strand_val = st.selectbox("Genomic Strand", options=["+", "-"], index=0)
 
     with col2:
         st.markdown("#### 🧬 GC Content Composition")
         gc_ex = st.slider("Exon GC content (0–1)", min_value=0.0, max_value=1.0, value=0.505, step=0.01)
-        gc_up = st.slider("Upstream 100bp GC content (0–1)", min_value=0.05, max_value=0.95, value=0.44, step=0.01)
-        gc_dn = st.slider("Downstream 100bp GC content (0–1)", min_value=0.05, max_value=0.95, value=0.44, step=0.01)
+        gc_up = st.slider("Upstream 100bp GC (0–1)", min_value=0.05, max_value=0.95, value=0.44, step=0.01)
+        gc_dn = st.slider("Downstream 100bp GC (0–1)", min_value=0.05, max_value=0.95, value=0.44, step=0.01)
 
     with col3:
-        st.markdown("#### 📈 RNA-seq Coverage Statistics")
-        cov_ctrl_m = st.number_input("Control Coverage Mean (reads)", min_value=0.0, max_value=2000.0, value=16.5, step=1.0)
-        cov_ctrl_v = st.number_input("Control Coverage Variance", min_value=0.0, max_value=300000.0, value=163.7, step=10.0)
-        cov_kd_m = st.number_input("KD Coverage Mean (reads)", min_value=0.0, max_value=2000.0, value=15.7, step=1.0)
-        cov_kd_v = st.number_input("KD Coverage Variance", min_value=0.0, max_value=300000.0, value=154.3, step=10.0)
+        st.markdown("#### 🔬 HNRNPC U-Tract Motifs")
+        utract_up_len = st.number_input("Upstream Max U-Tract (bp)", min_value=0, max_value=50, value=6, step=1)
+        utract_dn_len = st.number_input("Downstream Max U-Tract (bp)", min_value=0, max_value=50, value=4, step=1)
+        u_frac_up = st.slider("Upstream U-Fraction (0–1)", min_value=0.0, max_value=1.0, value=0.34, step=0.01)
+        u_frac_dn = st.slider("Downstream U-Fraction (0–1)", min_value=0.0, max_value=1.0, value=0.30, step=0.01)
+
+    with col4:
+        st.markdown("#### 📈 Coverage Statistics")
+        cov_ctrl_m = st.number_input("Control Mean (reads)", min_value=0.0, max_value=2000.0, value=16.5, step=1.0)
+        cov_ctrl_v = st.number_input("Control Variance", min_value=0.0, max_value=300000.0, value=163.7, step=10.0)
+        cov_kd_m = st.number_input("KD Mean (reads)", min_value=0.0, max_value=2000.0, value=15.7, step=1.0)
+        cov_kd_v = st.number_input("KD Variance", min_value=0.0, max_value=300000.0, value=154.3, step=10.0)
 
     st.markdown("---")
     st.markdown("#### ⚖️ Replicate Inclusion Levels (PSI / $\\Psi$) & Overall Signals")
@@ -295,12 +319,15 @@ with tab2:
         st.caption(f"Calculated Overall Coverage Mean: **{cov_tot_m:.2f}**, Variance: **{cov_tot_v:.2f}**")
 
     if st.button("🔮 Predict Alternative Splicing Event Type", type="primary", use_container_width=True):
-        # Format input vector
         single_row = {
             "exon_length": exon_len,
             "gc_exon": gc_ex,
             "gc_upstream_100bp": gc_up,
             "gc_downstream_100bp": gc_dn,
+            "max_utract_length_upstream": utract_up_len,
+            "max_utract_length_downstream": utract_dn_len,
+            "u_fraction_upstream": u_frac_up,
+            "u_fraction_downstream": u_frac_dn,
             "score_5ss_donor": score_5ss,
             "score_3ss_acceptor": score_3ss,
             "cov_mean_control": cov_ctrl_m,
@@ -339,13 +366,12 @@ with tab2:
             )
             st.markdown(f"**Description:** {CLASS_DESCRIPTIONS.get(top_class, '')}")
 
-            # RI Caveat Check: if RI is top prediction OR within 15 points (0.15) of top prediction
             ri_prob = prob_dict.get("RI", 0.0)
             if top_class == "RI" or (top_p - ri_prob <= 0.15):
                 st.warning(
                     f"⚠️ **Retained Intron Caveat Triggered**:\n\n"
                     f"RI probability is **{ri_prob*100:.1f}%** (within 15% of top call). "
-                    f"Retained Intron events exhibit an empirical **71% F1** (vs 76–79% for SE and MXE) "
+                    f"Retained Intron events exhibit an empirical **~73% F1** (vs 77–80% for SE and MXE) "
                     f"due to sequence similarity with continuous exons. Treat this call with extra scrutiny."
                 )
 
@@ -368,7 +394,7 @@ with tab2:
             ax.set_yticklabels([f"{c} ({CLASS_DESCRIPTIONS.get(c, '')})" for c in classes], fontsize=9)
             ax.set_xlim(0, 1.15)
             ax.set_xlabel("Predicted Probability", fontsize=10, fontweight="bold")
-            ax.set_title("Random Forest Multi-Class Probabilities", fontsize=11, fontweight="bold", pad=10)
+            ax.set_title("Random Forest V2 Multi-Class Probabilities", fontsize=11, fontweight="bold", pad=10)
             plt.tight_layout()
             st.pyplot(fig)
             plt.close()

@@ -451,4 +451,19 @@ Updated `data/reference/manifest.csv` based on ENA `sample_accession` cross-chec
 **Output:** Initialized Git repo, staged and committed 59 files (22,111 insertions), pushed `main` branch to remote origin (`https://github.com/HackedScreen/splicing-ml-project.git`), and checked out `experimental-accuracy` branch.
 **Dissertation section:** §3.1, Appendix A.3
 
+### [Stage 5 V2] Feature engineering: HNRNPC U-tract binding motif density — 2026-09-24
+**Command:**
+`python scripts/05_feature_engineering_v2.py`
+**Rationale:** Extract 4 biological HNRNPC binding motif density features across 100 bp upstream and downstream flanking windows oriented along transcript sense strand: `max_utract_length_upstream`, `max_utract_length_downstream`, `u_fraction_upstream`, and `u_fraction_downstream`. Implemented across both KD1 discovery cohort ($N=8,693$) and KD2 independent validation cohort ($N=7,080$) with identical column schema (33 columns total, 0 missing/NaN values).
+**Output:** Generated `results/features/feature_matrix_v2.csv` (8,693 rows, 33 columns) and `results/features/feature_matrix_kd2_v2.csv` (7,080 rows, 33 columns). SE showed pronounced upstream U-tract enrichment: mean upstream max U-tract of 6.05 bp in KD1 (and 6.18 bp in KD2) vs 3.60–4.95 bp in other classes; mean upstream U-fraction of 0.3367 in KD1 (0.3452 in KD2) vs 0.2676–0.3304 in other classes.
+**Dissertation section:** §3.6, §4.3, Appendix A.2
+
+### [Stages 6 & 7 V2] Model training, tuning & dual evaluation (XGBoost & Random Forest V2) — 2026-09-24
+**Command:**
+`python scripts/06_train_evaluate_v2.py`
+**Rationale:** Train and evaluate XGBoost classifier on the 23-feature set (17 numeric + 4 U-tract + 2 strand dummies) using `sample_weight=compute_sample_weight('balanced', y_train)` and 5-fold stratified GridSearchCV ($n\_estimators \in [100, 300]$, $max\_depth \in [3, 6, 10]$, $learning\_rate \in [0.05, 0.1, 0.2]$) on the frozen 80% KD1 training partition ($N=6,954$). For direct ablation, also tune Random Forest V2 on the identical 23 features. Evaluate both models on the held-out internal KD1 test partition ($N=1,739$) and the untouched external KD2 validation cohort ($N=7,080$).
+**Output:** Optimal XGBoost params (`lr=0.05`, `max_depth=6`, `n_est=300`) achieved 0.6558 CV Macro-F1, 72.17% internal test accuracy, 0.6385 internal Macro-F1, 73.90% KD2 accuracy, and 0.6655 KD2 Macro-F1. `max_utract_length_upstream` ranked #5 of 23 in XGBoost importance (0.0504 gain). Random Forest V2 achieved 74.81% internal test accuracy (+0.80 pp vs RF baseline), 0.6611 internal Macro-F1 (+0.0137), 76.82% KD2 accuracy (+1.00 pp vs RF baseline), and 0.7003 KD2 Macro-F1 (+0.0107). Artifacts saved to `results/models/` (*_v2.joblib, *_v2.png, *_v2.md).
+**Dissertation section:** §3.7.2, §4.1, §4.3, §4.6, Appendix A.3
+
+
 
