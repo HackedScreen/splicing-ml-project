@@ -465,5 +465,45 @@ Updated `data/reference/manifest.csv` based on ENA `sample_accession` cross-chec
 **Output:** Optimal XGBoost params (`lr=0.05`, `max_depth=6`, `n_est=300`) achieved 0.6558 CV Macro-F1, 72.17% internal test accuracy, 0.6385 internal Macro-F1, 73.90% KD2 accuracy, and 0.6655 KD2 Macro-F1. `max_utract_length_upstream` ranked #5 of 23 in XGBoost importance (0.0504 gain). Random Forest V2 achieved 74.81% internal test accuracy (+0.80 pp vs RF baseline), 0.6611 internal Macro-F1 (+0.0137), 76.82% KD2 accuracy (+1.00 pp vs RF baseline), and 0.7003 KD2 Macro-F1 (+0.0107). Artifacts saved to `results/models/` (*_v2.joblib, *_v2.png, *_v2.md).
 **Dissertation section:** §3.7.2, §4.1, §4.3, §4.6, Appendix A.3
 
+### [Model Promotion & Checkpoint] RF V2 adopted as primary model — 2026-09-24
+**Command:**
+`cp results/models/random_forest_corrected.joblib results/models/random_forest_corrected_baseline_backup.joblib && cp results/models/random_forest_v2.joblib results/models/random_forest_corrected.joblib && git commit -m "Adopt RF V2 primary model: HNRNPC U-tract feature addition improves KD2 validation to 76.82% acc and 0.7003 macro-F1"`
+**Rationale:** Backup the original 19-feature Random Forest baseline and promote Random Forest V2 (23 features, incorporating HNRNPC U-tract motif features) to the primary model position following validated performance gains on both the internal test partition (74.81% accuracy, 0.6611 Macro-F1) and the independent KD2 biological validation cohort (76.82% accuracy, 0.7003 Macro-F1). Update Streamlit application configuration and commit clean checkpoint to `experimental-accuracy` branch.
+**Output:** Baseline backed up to `random_forest_corrected_baseline_backup.joblib`; `random_forest_corrected.joblib` updated to RF V2; `app/streamlit_app.py` updated to 23 features and verified; git commit `aaaa447` created.
+**Dissertation section:** §3.8, §4.6, Appendix A.3
 
+### [Round 3 Step 2] Soft-voting ensemble CV weight grid search and dual evaluation — 2026-09-24
+**Command:**
+`python scripts/07_ensemble_and_threshold_tuning.py` (Ensemble component)
+**Rationale:** Grid search probability-averaging weights between RF V2 and XGBoost V2 ($w_{RF} \in [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]$) strictly on 5-fold cross-validation out-of-fold predictions on the training partition ($N=6,954$) scoring by Macro-F1. Lock in the winning weight without test set or KD2 leakage, then evaluate the ensemble against internal held-out test ($N=1,739$) and KD2 validation ($N=7,080$) cohorts. Candidate retained only if it beats RF V2 on both cohorts.
+**Output:** Winning CV weight $w_{RF}=0.7, w_{XGB}=0.3$ achieved 0.6722 CV Macro-F1 (vs 0.6414 RF CV). On internal test: 74.64% Acc (-0.17 pp vs RF V2), 0.6532 Macro-F1 (-0.0079); on KD2: 76.82% Acc (0.00 pp), 0.7020 Macro-F1 (+0.0017). Dropped per pre-specified protocol as it failed to beat RF V2 on both cohorts.
+**Dissertation section:** §3.7.3, §4.3, §4.6
+
+### [Round 3 Step 3] Per-class decision threshold tuning on CV out-of-fold predictions — 2026-09-24
+**Command:**
+`python scripts/07_ensemble_and_threshold_tuning.py` (Threshold tuning component)
+**Rationale:** Address severe multi-class imbalance (A3SS: 9.05%, A5SS: 4.60%, MXE: 31.08%, RI: 5.75%, SE: 49.53%) by tuning per-class probability multipliers $m \in \mathbb{R}^5_+$ on training-set 5-fold CV out-of-fold predictions from RF V2 to maximize Macro-F1. Lock in optimal multipliers before evaluating once on the held-out test set ($N=1,739$) and KD2 validation set ($N=7,080$).
+**Output:** Optimal multipliers (relative to SE=1.0000: A3SS: 1.3110, A5SS: 1.6759, MXE: 1.1012, RI: 1.2090) increased CV Macro-F1 from 0.6414 to 0.6634 (+0.0220), boosting minority recall (RI: 87.0% test, 90.1% KD2). However, test accuracy fell to 72.80% (-2.01 pp) and Macro-F1 to 0.6462 (-0.0149); KD2 accuracy fell to 74.38% (-2.44 pp) and Macro-F1 to 0.6799 (-0.0204). Dropped due to majority-class false positive inflation under generalized testing.
+**Dissertation section:** §3.7.3, §4.3, §4.6
+
+### [Stage 5 V3] Genuine MaxEntScan splice site scoring (Yeo & Burge) — 2026-09-24
+**Command:**
+`python scripts/05_feature_engineering_maxent.py`
+**Rationale:** Replace additive position weight matrix (PWM) splice site scores with genuine MaxEntScan (Yeo & Burge, 2004) maximum entropy models on 9 bp donor windows ([-3 exon, +6 intron]) and 23 bp acceptor windows ([-20 intron, +3 exon]). Eliminates position independence assumptions and models non-adjacent sequence dependencies and consensus dinucleotide thermodynamics from GRCh38 primary assembly FASTA across all 8,693 KD1 events and 7,080 KD2 events.
+**Output:** Generated `results/features/feature_matrix_v3_maxent.csv` ($N=8,693$, 33 cols) and `results/features/feature_matrix_kd2_v3_maxent.csv` ($N=7,080$, 33 cols). MaxEnt donor scores: KD1 mean 6.67 (std 5.17), KD2 mean 6.71 (std 4.59); MaxEnt acceptor scores: KD1 mean 6.26 (std 5.20), KD2 mean 6.02 (std 5.26).
+**Dissertation section:** §3.6, §4.3, Appendix A.2
+
+### [Stages 6 & 7 V3] Random Forest training and dual evaluation with MaxEntScan features — 2026-09-24
+**Command:**
+`python scripts/06_train_evaluate_maxent.py`
+**Rationale:** Retrain Random Forest classifier on the 23-feature dataset incorporating genuine MaxEntScan splice site scores using 5-fold stratified GridSearchCV ($n\_estimators \in [100, 300]$, $max\_depth \in [\text{None}, 10, 20]$, scoring by `f1_macro`) on the frozen 80% KD1 training partition ($N=6,954$). Lock the single winning hyperparameter configuration from training-set CV alone, then evaluate that model on the internal held-out test partition ($N=1,739$) and external KD2 validation cohort ($N=7,080$).
+**Output:** Optimal parameters selected strictly via 5-fold training CV were `max_depth = 20`, `n_estimators = 100` (CV Macro-F1 = 0.6210). MaxEntScan splice site scores ranked #5 (`score_3ss_acceptor`: 0.0550) and #6 (`score_5ss_donor`: 0.0515) in Gini importance. On internal test ($N=1,739$): Accuracy = 75.79% (+0.98 pp vs RF V2), Macro-F1 = 0.6203 (-0.0408 vs RF V2), Weighted-F1 = 0.7419, ROC-AUC = 0.9055. On KD2 validation ($N=7,080$): Accuracy = 79.41% (+2.59 pp vs RF V2), Macro-F1 = 0.6897 (-0.0106 vs RF V2), Weighted-F1 = 0.7846, ROC-AUC = 0.9187. Models and evaluation plots saved to `results/models/*_v3_maxent.*`.
+**Dissertation section:** §3.7.2, §4.1, §4.3, §4.6, Appendix A.3
+
+### [Methodology Correction] Retraction of post-hoc hyperparameter selection on locked validation set — 2026-09-24
+**Command:**
+`rm -f scripts/check_maxent_configs.py`
+**Rationale:** Place on formal record a methodology correction regarding Step 4 evaluation: Following the initial execution of `06_train_evaluate_maxent.py` (which correctly selected `max_depth=20, n_estimators=100` via training-set CV), a secondary unconstrained configuration (`max_depth=None, n_estimators=300`) was evaluated post-hoc against the locked internal test set and KD2 validation set, and was highlighted in the initial report based on superior test/KD2 numbers (76.19% test acc, 80.34% KD2 acc). This comparison was invalid: evaluating multiple model variants against a locked validation or test set and choosing or promoting based on out-of-sample metrics constitutes information leakage and post-hoc selection bias, equivalent to tuning against the test partition. To maintain strict scientific integrity, the exploration script was removed, all post-hoc comparisons were retracted, and the single legitimate candidate is confirmed as the GridSearchCV winner (`max_depth=20, n_estimators=100`) selected exclusively on training CV.
+**Output:** Exploratory script removed; post-hoc configuration retracted from dissertation pipeline; official MaxEntScan results locked strictly to the training-CV winner: Internal test 75.79% acc / 0.6203 Macro-F1; KD2 validation 79.41% acc / 0.6897 Macro-F1.
+**Dissertation section:** §3.7.2, §4.6, Chapter 5 (Methodological Integrity & Limitations)
 
