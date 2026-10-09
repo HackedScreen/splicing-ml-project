@@ -507,3 +507,19 @@ Updated `data/reference/manifest.csv` based on ENA `sample_accession` cross-chec
 **Output:** Exploratory script removed; post-hoc configuration retracted from dissertation pipeline; official MaxEntScan results locked strictly to the training-CV winner: Internal test 75.79% acc / 0.6203 Macro-F1; KD2 validation 79.41% acc / 0.6897 Macro-F1.
 **Dissertation section:** §3.7.2, §4.6, Chapter 5 (Methodological Integrity & Limitations)
 
+### [Stage 7c Robustness Check] Gene-grouped train/test split audit (GroupShuffleSplit & GroupKFold) — 2026-10-08
+**Command:**
+`python scripts/07c_gene_grouped_split_robustness.py`
+**Rationale:** Investigate supervisor review methodological concern regarding optimistic bias from event-level random train/test splitting across multi-event gene loci. Quantify gene redundancy against Ensembl release 116 GTF annotations, re-split using scikit-learn GroupShuffleSplit (80/20, random_state=42) grouped strictly by gene_id with zero gene leakage, retrain Random Forest V2 with frozen hyperparameters (n_estimators=300, max_depth=None, balanced weights, 23 features), evaluate across test partitions and 5-fold GroupKFold CV, and assess out-of-sample generalization retention on the independent KD2 cohort.
+**Output:** Quantified 79.01% of events belong to multi-event genes (74.99% test gene leakage in random split); under strict gene-grouped splitting, RF V2 test accuracy dropped from 74.81% to 66.59% (-8.22 pp), Macro-F1 dropped from 0.6611 to 0.5567 (-0.1045, 5-fold GroupKFold mean: 66.88% acc / 0.5629 F1), with A5SS (F1: 0.2903, -0.2055) and MXE (F1: 0.6332, -0.1327) most affected while SE (0.7531) and RI (0.6786) remained resilient; external KD2 accuracy remained 74.94% (vs 76.82%, -1.88 pp).
+**Dissertation section:** §4.5, §5.1, Appendix A.3
+
+### [Stage 7d Robustness Check] Follow-up robustness battery for supervisor review (gene-overlap stratification, feature ablation, grouped re-tuning, cluster bootstrap, probability calibration, leakage diagnostics & lane negative control) — 2026-10-08
+**Command:**
+`python scripts/07d_supervisor_followup_analyses.py`
+**Rationale:** Systematically address supervisor methodological concerns regarding potential optimistic bias from gene redundancy: stratify external KD2 validation by training gene overlap; evaluate 5-fold GroupKFold feature ablations (all 23 vs sequence/structure only vs coverage/PSI only); re-tune Random Forest hyperparameters strictly on training groups under GroupKFold CV; compute 1,000-iteration gene-level cluster bootstrap 95% CIs on held-out test groups; evaluate multiclass Brier score calibration against CalibratedClassifierCV; audit feature mutual information and coordinate leakage; and conduct rigorous statistical hypothesis testing on the technical lane negative control (ERR127306 vs ERR127307).
+**Output:** KD2 performance stratified into seen genes (N=4,362 [61.61%], 82.03% acc, 0.7700 macro-F1) vs unseen genes (N=2,718 [38.39%], 63.58% acc, 0.5222 macro-F1); GroupKFold feature ablation yielded 66.88% acc / 0.5629 F1 (all 23), 52.33% acc / 0.4598 F1 (sequence/structure), and 57.61% acc / 0.3947 F1 (coverage/PSI); GroupKFold re-tuning reaffirmed identical hyperparameters (n_estimators=300, max_depth=None); 1,000 gene cluster bootstrap 95% CIs: Accuracy [63.27%, 70.18%], Macro-F1 [0.5190, 0.5966]; CalibratedClassifierCV improved Brier score from 0.4647 to 0.4358 (67.37% acc); mutual information ranked exon_length #1 (0.2133) followed by coverage means (0.1744–0.1867), with 0.00% train/test coordinate overlap; lane negative control yielded 3,741 / 114,252 significant events (3.27%, 34.5% below 5% null expectation, binomial p=0.0498, median |ΔPSI|=1.000). Tables and figures saved to results/models/.
+**Dissertation section:** §4.5, §5.1, Appendix A.3
+
+
+

@@ -1,0 +1,17 @@
+Metric,Value
+Total Events Tested (JC),"114,252"
+Events at FDR < 0.05,"3,741 (3.27%)"
+Expected Under Null (5%),"5,712.6"
+Observed / Null Ratio,0.655
+Up Count (Sample 1 Higher),"1,931 (51.62%)"
+Down Count (Sample 2 Higher),"1,810 (48.38%)"
+Exact Binomial Test p-value,0.0498
+Clopper-Pearson 95% CI,"[0.5000, 0.5323]"
+|dPSI| Min,0.0200
+|dPSI| 25% (Q1),0.7150
+|dPSI| Median (50%),1.0000
+|dPSI| 75% (Q3),1.0000
+|dPSI| 90%,1.0000
+|dPSI| 95%,1.0000
+|dPSI| Max,1.0000
+|dPSI| Mean ± SD,0.8379 ± 0.2374
