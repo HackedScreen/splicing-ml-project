@@ -26,7 +26,7 @@ This document serves as the immutable cryptographic register (SHA256) of all tra
 
 | Artifact Filename | Description | Size (bytes) | SHA256 Checksum |
 | :--- | :--- | :---: | :--- |
-| `train_test_data_v2_gene_grouped.joblib` | Gene-grouped split dictionary (`GroupShuffleSplit`, `random_state=42`, $N_{\text{train}}=6,894$, $N_{\text{test}}=1,799$, 0 gene overlap) | 2,129,464 | `5e09ba584e85f105dcda3f90859108741adabba95129393f05aa1404ef6afcc4` |
+| `train_test_data_v2_gene_grouped.joblib` | Gene-grouped split dictionary (`GroupShuffleSplit`, `random_state=42`, $N_{\text{train}}=6,894$, $N_{\text{test}}=1,799$, 0 gene overlap) | 2,129,464 | `69980753ed88b31c28d5632be0c44642df33380ec064a3b52227f24108e0a5bf` |
 | `train_test_data_v2.joblib` | Random stratified split dictionary for V2 23-feature dataset ($N_{\text{train}}=6,954$, $N_{\text{test}}=1,739$) | 1,832,292 | `deb032bb939ae60ec95b02a5a7cc4146104e5bc057255f0351529010aa2266cc` |
 | `train_test_data_corrected.joblib` | Random stratified split dictionary for corrected 19-feature dataset ($N_{\text{train}}=6,954$, $N_{\text{test}}=1,739$) | 1,552,978 | `f3f656fe457fe804c0620cd422fc256572fbf548c389e2d333da9dde71380d51` |
 | `train_test_data_v3_maxent.joblib` | Random stratified split dictionary for MaxEntScan dataset ($N_{\text{train}}=6,954$, $N_{\text{test}}=1,739$) | 1,832,280 | `114cd1ea9fd4682b2ff8f01221c075ef02ba8e391322a5c27c2a3a381ac01677` |
