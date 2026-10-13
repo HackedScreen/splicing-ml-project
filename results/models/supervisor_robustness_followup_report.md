@@ -8,7 +8,7 @@
 
 ## 1. KD2 External Validation Stratified by Gene Overlap
 
-To evaluate whether cross-sample generalization on the independent KD2 biological replicate cohort ($N=7,080$) was inflated by genes shared with the training set, KD2 events were partitioned into two disjoint strata:
+To determine whether the strong external generalization of the model on the independent KD2 biological replicate cohort ($N=7,080$) was inflated by genes shared with the training set, KD2 events were partitioned into two disjoint strata:
 - **Seen Genes**: Events located within genes present in the KD1 training partition ($N_{train\_genes} = 2,888$).
 - **Unseen Genes**: Events located in genes completely absent from the KD1 training partition.
 
@@ -21,7 +21,7 @@ To evaluate whether cross-sample generalization on the independent KD2 biologica
 **Findings**:
 - **61.61%** of KD2 events (4,362 / 7,080) belong to genes present in the KD1 training set.
 - On **Seen Genes**, the model achieves **82.03% accuracy** and **0.7700 Macro-F1**.
-- On **Unseen Genes** (novel genes absent from the KD1 training set), performance drops to **63.58% accuracy** and **0.5222 Macro-F1** (-18.45 pp in accuracy, -0.2478 in Macro-F1).
+- On **Unseen Genes** (novel genes absent from the KD1 training set), performance drops to **63.58% accuracy** and **0.5222 Macro-F1** (-18.45 pp accuracy, -0.2478 Macro-F1).
 - Minority classes on unseen genes experience severe degradation: A5SS F1 falls to 0.3491 and A3SS F1 falls to 0.3595.
 - This demonstrates that gene-context familiarity confers a substantial performance advantage, and generalisation to completely uncharacterised genomic loci without prior gene exposure represents a steeper challenge (63.58% accuracy), closely matching internal gene-grouped test performance (66.59%).
 
@@ -36,14 +36,14 @@ To isolate the predictive contributions of intrinsic biophysical sequence/geomet
 
 | Feature Subset | N Features | Mean Accuracy $\pm$ SD | Mean Macro-F1 $\pm$ SD |
 | :--- | :---: | :---: | :---: |
-| **A_All_23** | 23 | **66.88% ± 0.96%** | **0.5629 ± 0.0117** |
-| **B_Seq_Struct_Only** | 12 | **52.33% ± 1.32%** | **0.4598 ± 0.0098** |
-| **C_Cov_PSI_Only** | 11 | **57.61% ± 1.75%** | **0.3947 ± 0.0185** |
+| **(A) All 23 Features** | 23 | **66.88% $\pm$ 0.96%** | **0.5629 $\pm$ 0.0117** |
+| **(B) Sequence/Structure Only** | 12 | **52.33% $\pm$ 1.32%** | **0.4598 $\pm$ 0.0098** |
+| **(C) Coverage/PSI Only** | 11 | **57.61% $\pm$ 1.75%** | **0.3947 $\pm$ 0.0185** |
 
 **Findings**:
-- Sequence and structural features alone capture significant discriminative signal, achieving **52.33% ± 1.32% accuracy** and **0.4598 ± 0.0098 Macro-F1**.
-- Coverage and PSI features alone achieve **57.61% ± 1.75% accuracy** and **0.3947 ± 0.0185 Macro-F1**.
-- Combining both feature modalities yields the optimal Macro-F1 (**0.5629 ± 0.0117**), demonstrating complementary predictive value.
+- Sequence and structural features alone capture significant discriminative signal, achieving **52.33% accuracy** and **0.4598 Macro-F1**.
+- Coverage and PSI features alone achieve **57.61% accuracy** and **0.3947 Macro-F1**.
+- Combining both feature modalities yields the optimal Macro-F1 (**0.5629**), demonstrating complementary predictive value.
 
 ---
 
@@ -53,15 +53,15 @@ A full grid search was conducted strictly on the training partition ($N=6,894$, 
 
 | `n_estimators` | `max_depth` | Mean CV Macro-F1 $\pm$ SD |
 | :---: | :---: | :---: |
-| 300 | `None` | **0.5753 ± 0.0215** |
-| 300 | `20` | **0.5725 ± 0.0194** |
-| 100 | `20` | **0.5695 ± 0.0185** |
 | 100 | `None` | **0.5677 ± 0.0193** |
-| 300 | `10` | **0.5585 ± 0.0180** |
+| 300 | `None` | **0.5753 ± 0.0215** |
 | 100 | `10` | **0.5565 ± 0.0159** |
+| 300 | `10` | **0.5585 ± 0.0180** |
+| 100 | `20` | **0.5695 ± 0.0185** |
+| 300 | `20` | **0.5725 ± 0.0194** |
 
 **Findings**:
-- **Winning Configuration**: `{'max_depth': None, 'n_estimators': 300}` (CV Macro-F1 = 0.5753 ± 0.0215).
+- **Winning Configuration**: `{'max_depth': None, 'n_estimators': 300}` (CV Macro-F1 = 0.5753).
 - **Did parameters change from default (`n_estimators=300, max_depth=None`)?**: **No, exactly identical.**
 - Held-out test performance of this configuration: **Accuracy = 66.59%**, **Macro-F1 = 0.5567**.
 
@@ -75,11 +75,11 @@ Resampling 722 unique test genes with replacement 1,000 times yielded the follow
 | :--- | :---: | :---: | :---: |
 | **Overall Accuracy** | **66.59%** | 66.63% $\pm$ 1.81% | **[63.27%, 70.18%]** |
 | **Macro-F1** | **0.5567** | 0.5564 $\pm$ 0.0200 | **[0.5190, 0.5966]** |
-| **F1-Score (A3SS)** | **0.4281** | 0.4278 $\pm$ 0.0423 | **[0.3500, 0.5074]** |
-| **F1-Score (A5SS)** | **0.2903** | 0.2885 $\pm$ 0.0606 | **[0.1739, 0.4082]** |
-| **F1-Score (MXE)** | **0.6332** | 0.6335 $\pm$ 0.0285 | **[0.5754, 0.6887]** |
-| **F1-Score (RI)** | **0.6786** | 0.6787 $\pm$ 0.0339 | **[0.6127, 0.7439]** |
-| **F1-Score (SE)** | **0.7531** | 0.7535 $\pm$ 0.0171 | **[0.7194, 0.7875]** |
+| **F1 (A3SS)** | **0.4281** | 0.4278 $\pm$ 0.0423 | **[0.3500, 0.5074]** |
+| **F1 (A5SS)** | **0.2903** | 0.2885 $\pm$ 0.0606 | **[0.1739, 0.4082]** |
+| **F1 (MXE)** | **0.6332** | 0.6335 $\pm$ 0.0285 | **[0.5754, 0.6887]** |
+| **F1 (RI)** | **0.6786** | 0.6787 $\pm$ 0.0339 | **[0.6127, 0.7439]** |
+| **F1 (SE)** | **0.7531** | 0.7535 $\pm$ 0.0171 | **[0.7194, 0.7875]** |
 
 **Findings**:
 - Overall accuracy is bound between **63.27%** and **70.18%** at 95% confidence across gene clusters.
@@ -89,7 +89,7 @@ Resampling 722 unique test genes with replacement 1,000 times yielded the follow
 
 ## 5. Probability Calibration Analysis
 
-Multiclass Brier score (lower is better) on the held-out test partition ($N=1,799$):
+Multiclass Brier score ($\frac{1}{N} \sum_{i=1}^{N} \sum_{k=1}^{K} (p_{ik} - y_{ik})^2$, lower is better) on the held-out test partition:
 
 | Model | Multiclass Brier Score | Accuracy | Macro-F1 |
 | :--- | :---: | :---: | :---: |
@@ -117,8 +117,8 @@ Multiclass Brier score (lower is better) on the held-out test partition ($N=1,79
 10. `psi_control_mean`: **0.1076**
 
 ### B. Row and Coordinate Deduplication
-- **Exact duplicate feature rows**: **78** across all 23 features in the full dataset (68 train, 10 test).
-- **Coordinate loci appearing with different labels**: **416** loci (1,113 events, 12.80% of dataset). These represent complex overlapping alternative splicing annotations at shared splice junctions.
+- **Exact duplicate feature rows**: **78** across all 23 features in the full dataset.
+- **Coordinate loci appearing with different labels**: **416** loci (1113 events, 12.80% of dataset). These represent complex overlapping alternative splicing annotations at shared splice junctions.
 - **Train/Test Coordinate Overlap under Gene-Grouped Split**: **2** coordinate loci (2 test events, **0.11%**).
   - Because genes were strictly partitioned, 0.00% of test events shared genomic coordinates with training events (except 2 edge cases of overlapping gene coordinates).
 
@@ -135,11 +135,11 @@ From the technical lane comparison where identical biological RNA-seq material w
 | **Count Expected Under Null ($H_0$, $\alpha=0.05$)** | **5,712.6** | Theoretical uniform null expectation |
 | **Observed / Expected Null Ratio** | **0.655** | **34.5% below expected nominal false positive ceiling** |
 | **Up/Down Directional Split** | **1,931 (51.62%) vs 1,810 (48.38%)** | Near-perfect 50/50 symmetry |
-| **Exact Binomial Test ($H_0: p=0.5$)** | **$p = 0.0498** | **No evidence of directional lane bias ($p > 0.05$)** |
+| **Exact Binomial Test ($H_0: p=0.5$)** | **$p = 0.0498$** | **No evidence of directional lane bias ($p > 0.05$)** |
 | **Clopper-Pearson 95% Confidence Interval** | **[0.5000, 0.5323]** | Bound strictly encompasses 0.5000 |
 | **$|\Delta\text{PSI}|$ Median (50th percentile)** | **1.0000** | All-or-nothing stochastic zero-coverage artifact |
 | **$|\Delta\text{PSI}|$ 25th / 75th percentiles** | **0.7150 / 1.0000** | Confirms discrete binary toggling |
-| **$|\Delta\text{PSI}|$ Mean $\pm$ SD** | **0.8379 ± 0.2374** | Distinct from biological distribution (mean 0.20–0.25) |
+| **$|\Delta\text{PSI}|$ Mean $\pm$ SD** | **0.8379 $\pm$ 0.2374** | Distinct from biological distribution (mean 0.20–0.25) |
 
 **Findings**:
 The lane negative control passes every criterion for technical validity: the number of false discoveries (3.27%) is well below the 5.0% FDR bound, the up/down directional split is statistically indistinguishable from a fair coin toss ($p = 0.0498$), and the significant events are driven by stochastic low-count junction dropout rather than systematic technical confounding.

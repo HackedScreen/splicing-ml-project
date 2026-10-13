@@ -1,0 +1,89 @@
+=== [R1 Step 2C] Running rMATS: Lane Control (ERR127306 vs ERR127307, --variable-read-length) ===
+Start time: Tue Oct 13 02:02:11 SAST 2026
+gtf: 298.85076785087585
+There are 78941 distinct gene ID in the gtf file
+There are 646577 distinct transcript ID in the gtf file
+There are 43623 one-transcript genes in the gtf file
+There are 5087789 exons in the gtf file
+There are 29034 one-exon transcripts in the gtf file
+There are 24571 one-transcript genes with only one exon in the transcript
+Average number of transcripts per gene is 8.190636
+Average number of exons per transcript is 7.868806
+Average number of exons per transcript excluding one-exon tx is 8.191745
+Average number of gene per geneGroup is 10.556552
+statistic: 0.17544341087341309
+
+read outcome totals across all BAMs
+USED: 88825685
+NOT_PAIRED: 9612679
+NOT_NH_1: 15192011
+NOT_EXPECTED_CIGAR: 130661
+NOT_EXPECTED_READ_LENGTH: 0
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 323312
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 361865
+CLIPPED: 7730992
+total: 122177205
+outcomes by BAM written to: results/splicing_lane_control_vrl/tmp/2026-10-13-02_02_15_088372_read_outcomes_by_bam.txt
+
+novel: 1451.6414787769318
+The splicing graph and candidate read have been saved into results/splicing_lane_control_vrl/tmp/2026-10-13-02_02_15_088372_*.rmats
+save: 9.475981950759888
+loadsg: 0.26894521713256836
+
+==========
+Done processing each gene from dictionary to compile AS events
+Found 213081 exon skipping events
+Found 44014 exon MX events
+Found 125753 alt SS events
+There are 82714 alt 3 SS events and 43039 alt 5 SS events.
+Found 24552 RI events
+==========
+
+ase: 34.27068376541138
+count: 28.628092527389526
+Processing count files.
+Done processing count files.
+rMATS Lane Control completed in 2265 seconds.
+End time: Tue Oct 13 02:39:56 SAST 2026
+
+=======================================================
+rMATS RUN SUMMARY: results/splicing_lane_control_vrl
+=======================================================
+
+--- Read Outcomes By BAM ---
+File: results/splicing_lane_control_vrl/tmp/2026-10-13-02_02_15_088372_read_outcomes_by_bam.txt
+results/alignment/ERR127306.sorted.bam
+USED: 42343367
+NOT_PAIRED: 4370224
+NOT_NH_1: 7136386
+NOT_EXPECTED_CIGAR: 60373
+NOT_EXPECTED_READ_LENGTH: 0
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 152495
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 119992
+CLIPPED: 3726292
+TOTAL_FOR_BAM: 57909129
+results/alignment/ERR127307.sorted.bam
+USED: 46482318
+NOT_PAIRED: 5242455
+NOT_NH_1: 8055625
+NOT_EXPECTED_CIGAR: 70288
+NOT_EXPECTED_READ_LENGTH: 0
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 170817
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 241873
+CLIPPED: 4004700
+TOTAL_FOR_BAM: 64268076
+
+
+--- Splicing Events Summary (JC Counts) ---
+EventType        EventTypeDescription  TotalEventsJC  SignificantEventsJC  SigEventsJCSample1HigherInclusion  SigEventsJCSample2HigherInclusion
+       SE                skipped exon          47920                 1588                                806                                782
+     A5SS alternative 5' splice sites          14381                  366                                197                                169
+     A3SS alternative 3' splice sites          30940                  625                                312                                313
+      MXE    mutually exclusive exons          16279                  813                                434                                379
+       RI             retained intron          10277                  248                                142                                106
+
+Total Events Tested (JC): 119,797
+Total Significant Events (FDR < 0.05, JC): 3,640 (3.04%)

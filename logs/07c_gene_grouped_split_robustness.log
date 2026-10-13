@@ -1,0 +1,141 @@
+================================================================================
+GENE-GROUPED SPLIT ROBUSTNESS CHECK — SUPERVISOR AUDIT
+================================================================================
+Loading KD1 feature matrix: /home/brooklyn/splicing-ml-project/results/features/feature_matrix_v2.csv
+Loaded 8,693 events and 33 columns.
+
+----------------------------------------------------------------------
+1. DATASET-WIDE GENE DISTRIBUTION & RISK QUANTIFICATION
+----------------------------------------------------------------------
+Total alternative splicing events: 8,693
+Total unique genes: 3,610
+Genes contributing exactly 1 event: 1,825 (50.55% of genes)
+Genes contributing >1 event (multi-event): 1,785 (49.45% of genes)
+Events belonging to single-event genes: 1,825 (20.99% of events)
+Events belonging to multi-event genes: 6,868 (79.01% of events)
+Max events from a single gene: 46 (ENSG00000100401)
+Top 5 multi-event genes:
+  - ENSG00000100401 (RANGAP1): 46 events
+  - ENSG00000196756 (SNHG17): 40 events
+  - ENSG00000148180 (GSN): 31 events
+  - ENSG00000139531 (SUOX): 27 events
+  - ENSG00000173402 (DAG1): 24 events
+
+----------------------------------------------------------------------
+2. ORIGINAL RANDOM SPLIT: GENE LEAKAGE AUDIT
+----------------------------------------------------------------------
+Original Train: 6,954 events across 3,206 unique genes
+Original Test:  1,739 events across 1,285 unique genes
+Overlapping genes present in BOTH Train and Test: 881 (68.56% of test genes)
+Test events from genes seen in training: 1,304 / 1,739 (74.99%)
+-> Confirmation: 75.0% of test events in the original split had sister events from the same gene in the training set!
+
+Feature set: 23 features, Target classes: ['A3SS', 'A5SS', 'MXE', 'RI', 'SE']
+
+----------------------------------------------------------------------
+3. EXECUTING GENE-GROUPED SPLIT (GroupShuffleSplit)
+----------------------------------------------------------------------
+Grouped Train events: 6,894 (79.31%) across 2,888 genes
+Grouped Test events:  1,799 (20.69%) across 722 genes
+Gene overlap between Grouped Train and Test: 0 (STRICTLY ZERO LEAKAGE)
+
+Class distribution comparison:
+       Full Dataset  Full %  Group Train N  Group Train %  Group Test N  Group Test %
+label                                                                                
+A3SS            786    9.04            633           9.18           153          8.50
+A5SS            400    4.60            319           4.63            81          4.50
+MXE            2701   31.07           2135          30.97           566         31.46
+RI              500    5.75            393           5.70           107          5.95
+SE             4306   49.53           3414          49.52           892         49.58
+
+----------------------------------------------------------------------
+4. RETRAINING RANDOM FOREST V2 (IDENTICAL HYPERPARAMETERS)
+----------------------------------------------------------------------
+Hyperparameters: n_estimators=300, max_depth=None, class_weight='balanced', random_state=42
+Fitting Random Forest on gene-grouped training set...
+Training complete.
+
+----------------------------------------------------------------------
+5. EVALUATION ON GROUP-HELD-OUT TEST SET
+----------------------------------------------------------------------
+Group-Held-Out Test Accuracy: 66.59%
+Group-Held-Out Test Macro-F1: 0.5567
+Group-Held-Out Test Weighted-F1: 0.6625
+Group-Held-Out Test Macro-Precision: 0.5576
+Group-Held-Out Test Macro-Recall: 0.5851
+Group-Held-Out Test ROC-AUC (OVR): 0.8580
+
+==========================================================================================
+SIDE-BY-SIDE OVERALL PERFORMANCE COMPARISON: RANDOM SPLIT VS GENE-GROUPED SPLIT
+==========================================================================================
+Metric                 Random Split (V2)    Gene-Grouped Split   Delta (Group - Random)   
+------------------------------------------------------------------------------------------
+Accuracy               74.81%               66.59%               -8.22 pp                 
+Macro-F1               0.6611               0.5567               -0.1045                  
+Weighted-F1            0.7450               0.6625               -0.0826                  
+Macro-Precision        0.6876               0.5576               -0.1300                  
+Macro-Recall           0.6694               0.5851               -0.0842                  
+ROC-AUC (OVR Macro)    0.9077               0.8580               -0.0497                  
+==========================================================================================
+
+=========================================================================================================
+SIDE-BY-SIDE PER-CLASS BREAKDOWN: RANDOM SPLIT VS GENE-GROUPED SPLIT
+=========================================================================================================
+Class    Random F1    Group F1     Delta F1     Random Prec    Group Prec     Random Rec     Group Rec      Test N (Grp)
+---------------------------------------------------------------------------------------------------------
+A3SS     0.5166       0.4281       -0.0884      0.5379         0.4023         0.4968         0.4575         153         
+A5SS     0.4959       0.2903       -0.2055      0.7317         0.4186         0.3750         0.2222         81          
+MXE      0.7659       0.6332       -0.1327      0.7426         0.6673         0.7907         0.6025         566         
+RI       0.7287       0.6786       -0.0502      0.6122         0.5491         0.9000         0.8879         107         
+SE       0.7986       0.7531       -0.0455      0.8135         0.7506         0.7842         0.7556         892         
+=========================================================================================================
+
+----------------------------------------------------------------------
+CONFUSION MATRICES
+----------------------------------------------------------------------
+
+--- Original Random-Split Confusion Matrix (N = 1,739) ---
+      A3SS  A5SS  MXE  RI   SE
+A3SS    78     3   15  21   40
+A5SS    16    30    5  12   17
+MXE      9     1  427   5   98
+RI       8     2    0  90    0
+SE      34     5  128  19  676
+
+--- Gene-Grouped Split Confusion Matrix (N = 1,799) ---
+      A3SS  A5SS  MXE  RI   SE
+A3SS    70     7   18  28   30
+A5SS    18    18    8  14   23
+MXE     40     5  341  10  170
+RI       7     4    0  95    1
+SE      39     9  144  26  674
+
+----------------------------------------------------------------------
+6. CROSS-VALIDATION COMPARISON: 5-FOLD GroupKFold VS StratifiedKFold
+----------------------------------------------------------------------
+Computing 5-fold GroupKFold CV on full dataset (grouped by gene_id)...
+  Fold 1: Acc = 68.03%, Macro-F1 = 0.5627
+  Fold 2: Acc = 65.67%, Macro-F1 = 0.5487
+  Fold 3: Acc = 67.63%, Macro-F1 = 0.5833
+  Fold 4: Acc = 65.82%, Macro-F1 = 0.5650
+  Fold 5: Acc = 67.26%, Macro-F1 = 0.5549
+
+5-Fold GroupKFold Mean: Acc = 66.88% (+/- 0.96 pp), Macro-F1 = 0.5629 (+/- 0.0117)
+
+----------------------------------------------------------------------
+7. EXTERNAL KD2 COHORT GENERALIZATION CHECK
+----------------------------------------------------------------------
+Original RF V2 on KD2:      Acc = 76.82%, Macro-F1 = 0.7003
+Gene-Grouped RF V2 on KD2:  Acc = 74.94%, Macro-F1 = 0.6688
+Generalization Delta:       Acc = -1.88 pp, Macro-F1 = -0.0315
+
+----------------------------------------------------------------------
+8. SAVING ARTIFACTS
+----------------------------------------------------------------------
+Saved grouped model: /home/brooklyn/splicing-ml-project/results/models/random_forest_v2_gene_grouped.joblib
+Saved grouped split data: /home/brooklyn/splicing-ml-project/results/models/train_test_data_v2_gene_grouped.joblib
+Saved side-by-side confusion matrix figure: /home/brooklyn/splicing-ml-project/results/models/confusion_matrix_rf_v2_gene_grouped.png
+
+Saved comprehensive report: /home/brooklyn/splicing-ml-project/results/models/gene_grouped_split_report.md
+
+GENE-GROUPED SPLIT ROBUSTNESS CHECK COMPLETE.

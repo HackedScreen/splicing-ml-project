@@ -1,0 +1,3 @@
+Cohort,N_Events,Median_Junction_Reads,Q25_Junction_Reads,Q75_Junction_Reads,IQR_Junction_Reads,Mean_Junction_Reads,Std_Junction_Reads
+Lane Control (ERR127306 vs ERR127307),3640,4.0,2.0,8.0,6.0,26.55,244.0936648144072
+KD1 Discovery (KD vs Downsampled Control),9247,179.0,40.0,695.5,655.5,1288.8346490753759,5655.632343712244

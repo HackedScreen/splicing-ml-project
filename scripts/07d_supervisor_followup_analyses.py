@@ -787,10 +787,11 @@ A full grid search was conducted strictly on the training partition ($N=6,894$, 
     for r in retuning_rows:
         full_report_md += f"| {r['n_estimators']} | `{r['max_depth']}` | **{r['Summary']}** |\n"
 
+    param_identical_str = 'No, exactly identical.' if best_params == {'n_estimators': 300, 'max_depth': None} else f'Yes, shifted to {best_params}.'
     full_report_md += f"""
 **Findings**:
 - **Winning Configuration**: `{best_params}` (CV Macro-F1 = {grid_search.best_score_:.4f}).
-- **Did parameters change from default (`n_estimators=300, max_depth=None`)?**: **{'No, exactly identical.' if best_params == {{'n_estimators': 300, 'max_depth': None}} else f'Yes, shifted to {best_params}.'}**
+- **Did parameters change from default (`n_estimators=300, max_depth=None`)?**: **{param_identical_str}**
 - Held-out test performance of this configuration: **Accuracy = {acc_retuned*100:.2f}%**, **Macro-F1 = {f1_retuned:.4f}**.
 
 ---

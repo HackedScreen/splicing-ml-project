@@ -1,0 +1,182 @@
+================================================================================
+STARTING COMPREHENSIVE SUPERVISOR FOLLOW-UP ROBUSTNESS ANALYSES
+================================================================================
+Loading KD1 feature matrix: /home/brooklyn/splicing-ml-project/results/features/feature_matrix_v2.csv
+Loading grouped split data from: /home/brooklyn/splicing-ml-project/results/models/train_test_data_v2_gene_grouped.joblib
+Loading gene-grouped Random Forest V2: /home/brooklyn/splicing-ml-project/results/models/random_forest_v2_gene_grouped.joblib
+
+================================================================================
+PART 1: KD2 EXTERNAL VALIDATION STRATIFIED BY GENE OVERLAP
+================================================================================
+Total KD2 Events: 7,080
+  - Stratum A (Seen Genes, in KD1 Train):   4,362 (61.61%) across 1,657 genes
+  - Stratum B (Unseen Genes, absent from KD1 Train): 2,718 (38.39%) across 1,407 genes
+
+Saved KD2 Stratified Table: /home/brooklyn/splicing-ml-project/results/models/kd2_gene_stratified_table.csv
+                             Stratum  N_Events    Pct_KD2  Accuracy  Macro_F1  F1_A3SS  F1_A5SS   F1_MXE    F1_RI    F1_SE
+                     Full KD2 Cohort      7080 100.000000  0.749435  0.668814 0.536900 0.567050 0.658006 0.756757 0.825358
+           Seen Genes (in KD1 Train)      4362  61.610169  0.820266  0.770009 0.680000 0.716129 0.756932 0.827709 0.869275
+Unseen Genes (Absent from KD1 Train)      2718  38.389831  0.635762  0.522223 0.359504 0.349057 0.471204 0.678431 0.752918
+
+================================================================================
+PART 2: FEATURE ABLATION UNDER 5-FOLD GROUPKFOLD (FULL DATASET N=8,693)
+================================================================================
+
+Running 5-fold GroupKFold for subset 'A_All_23' (23 features)...
+  Fold 1: Acc = 68.03%, Macro-F1 = 0.5627
+  Fold 2: Acc = 65.67%, Macro-F1 = 0.5487
+  Fold 3: Acc = 67.63%, Macro-F1 = 0.5833
+  Fold 4: Acc = 65.82%, Macro-F1 = 0.5650
+  Fold 5: Acc = 67.26%, Macro-F1 = 0.5549
+
+Running 5-fold GroupKFold for subset 'B_Seq_Struct_Only' (12 features)...
+  Fold 1: Acc = 53.65%, Macro-F1 = 0.4521
+  Fold 2: Acc = 54.00%, Macro-F1 = 0.4540
+  Fold 3: Acc = 50.95%, Macro-F1 = 0.4647
+  Fold 4: Acc = 50.81%, Macro-F1 = 0.4514
+  Fold 5: Acc = 52.24%, Macro-F1 = 0.4769
+
+Running 5-fold GroupKFold for subset 'C_Cov_PSI_Only' (11 features)...
+  Fold 1: Acc = 59.92%, Macro-F1 = 0.4100
+  Fold 2: Acc = 56.81%, Macro-F1 = 0.3777
+  Fold 3: Acc = 59.06%, Macro-F1 = 0.4192
+  Fold 4: Acc = 54.95%, Macro-F1 = 0.3703
+  Fold 5: Acc = 57.31%, Macro-F1 = 0.3962
+
+Saved Feature Ablation Table: /home/brooklyn/splicing-ml-project/results/models/feature_ablation_groupkfold_table.csv
+   Feature_Subset  N_Features Mean_Accuracy_Pct Std_Accuracy_Pct Accuracy_Summary Mean_Macro_F1 Std_Macro_F1 Macro_F1_Summary
+         A_All_23          23            66.88%            0.96%   66.88% ± 0.96%        0.5629       0.0117  0.5629 ± 0.0117
+B_Seq_Struct_Only          12            52.33%            1.32%   52.33% ± 1.32%        0.4598       0.0098  0.4598 ± 0.0098
+   C_Cov_PSI_Only          11            57.61%            1.75%   57.61% ± 1.75%        0.3947       0.0185  0.3947 ± 0.0185
+
+================================================================================
+PART 3: HYPERPARAMETER RE-TUNING UNDER GROUPKFOLD ON TRAINING GROUPS ONLY
+================================================================================
+Fitting GroupKFold GridSearchCV on training partition (N=6,894, 2,888 groups)...
+Fitting 5 folds for each of 6 candidates, totalling 30 fits
+
+Saved Re-Tuning Table: /home/brooklyn/splicing-ml-project/results/models/retuning_groupkfold_table.csv
+ n_estimators max_depth  CV_Macro_F1_Mean  CV_Macro_F1_Std         Summary
+          300      None          0.575279         0.021532 0.5753 ± 0.0215
+          300        20          0.572463         0.019408 0.5725 ± 0.0194
+          100        20          0.569532         0.018516 0.5695 ± 0.0185
+          100      None          0.567673         0.019291 0.5677 ± 0.0193
+          300        10          0.558481         0.018041 0.5585 ± 0.0180
+          100        10          0.556545         0.015911 0.5565 ± 0.0159
+
+Chosen best parameters under GroupKFold CV: {'max_depth': None, 'n_estimators': 300}
+Do chosen parameters differ from n_estimators=300, max_depth=None?: NO (Identical)
+Held-Out Test Performance of Re-Tuned Model: Accuracy = 66.59%, Macro-F1 = 0.5567
+
+================================================================================
+PART 4: GENE-LEVEL CLUSTER BOOTSTRAP (1,000 RESAMPLES OF TEST GENES)
+================================================================================
+Test Set: 1,799 events across 722 unique clusters (genes).
+Running 1,000 cluster bootstrap iterations...
+  Completed 250/1,000 bootstrap iterations
+  Completed 500/1,000 bootstrap iterations
+  Completed 750/1,000 bootstrap iterations
+  Completed 1,000/1,000 bootstrap iterations
+
+Saved Bootstrap Confidence Intervals Table: /home/brooklyn/splicing-ml-project/results/models/bootstrap_confidence_intervals_table.csv
+          Metric Point_Estimate Bootstrap_Mean Bootstrap_SD CI_95_Lower CI_95_Upper     CI_95_String
+Overall Accuracy         66.59%         66.63%        1.81%      63.27%      70.18% [63.27%, 70.18%]
+        Macro-F1         0.5567         0.5564       0.0200      0.5190      0.5966 [0.5190, 0.5966]
+ F1-Score (A3SS)         0.4281         0.4278       0.0423      0.3500      0.5074 [0.3500, 0.5074]
+ F1-Score (A5SS)         0.2903         0.2885       0.0606      0.1739      0.4082 [0.1739, 0.4082]
+  F1-Score (MXE)         0.6332         0.6335       0.0285      0.5754      0.6887 [0.5754, 0.6887]
+   F1-Score (RI)         0.6786         0.6787       0.0339      0.6127      0.7439 [0.6127, 0.7439]
+   F1-Score (SE)         0.7531         0.7535       0.0171      0.7194      0.7875 [0.7194, 0.7875]
+
+================================================================================
+PART 5: PROBABILITY CALIBRATION & RELIABILITY CURVES
+================================================================================
+Uncalibrated Multiclass Brier Score: 0.4647
+Fitting CalibratedClassifierCV (method='sigmoid') on training groups...
+Calibrated Multiclass Brier Score:   0.4358 (Delta = -0.0289)
+Calibrated Test Accuracy:            67.37% (vs 66.59%)
+Calibrated Test Macro-F1:            0.5572 (vs 0.5567)
+
+Saved Calibration Comparison Table: /home/brooklyn/splicing-ml-project/results/models/calibration_comparison_table.csv
+                                       Model  Multiclass_Brier_Score  Accuracy  Macro_F1
+                  Uncalibrated Grouped RF V2                0.464699  0.665926  0.556668
+CalibratedClassifierCV (Sigmoid, GroupKFold)                0.435816  0.673708  0.557157
+Saved Calibration Plot: /home/brooklyn/splicing-ml-project/results/models/calibration_curve_rf_grouped.png
+
+================================================================================
+PART 6: LEAKAGE DIAGNOSTICS
+================================================================================
+Computing Mutual Information (mutual_info_classif, seed 42) for 23 features...
+Saved Mutual Information Table: /home/brooklyn/splicing-ml-project/results/models/mutual_information_leakage_table.csv
+                     Feature  Mutual_Information  Rank
+                 exon_length            0.213278     1
+            cov_mean_overall            0.186673     2
+            cov_mean_control            0.180412     3
+                 cov_mean_kd            0.174402     4
+             cov_var_overall            0.161456     5
+             cov_var_control            0.155896     6
+                  cov_var_kd            0.152565     7
+          score_3ss_acceptor            0.112170     8
+             score_5ss_donor            0.110777     9
+            psi_control_mean            0.107591    10
+                 psi_kd_mean            0.092180    11
+                     gc_exon            0.067557    12
+                        dpsi            0.067222    13
+         u_fraction_upstream            0.033953    14
+  max_utract_length_upstream            0.030911    15
+                  psi_kd_var            0.030899    16
+           gc_upstream_100bp            0.029697    17
+             psi_control_var            0.028539    18
+       u_fraction_downstream            0.024004    19
+         gc_downstream_100bp            0.011752    20
+max_utract_length_downstream            0.007467    21
+                    strand_+            0.006224    22
+                    strand_-            0.000000    23
+
+Exact duplicate feature rows in dataset (23 features): 78 / 8,693
+  - In Train: 68 / 6,894
+  - In Test:  10 / 1,799
+
+Genomic Coordinate Duplicates Analysis:
+  - Total unique genomic coordinate loci: 7,412 / 8,693
+  - Coordinate loci appearing with DIFFERENT labels: 416
+  - Events affected by differing labels at identical coordinates: 1,113 (12.80%)
+
+Train/Test Coordinate Overlap under Gene-Grouped Split:
+  - Training coordinate tuples: 5,917
+  - Test coordinate tuples:     1,497
+  - Coordinate tuples present in BOTH Train and Test: 2
+  - Test events with coordinates overlapping Train:  2 / 1,799 (0.11%)
+
+================================================================================
+PART 7: LANE NEGATIVE CONTROL STATISTICAL EVALUATION
+================================================================================
+Reading lane control summary from: /home/brooklyn/splicing-ml-project/results/splicing_lane_control/summary.txt
+Total events tested across 5 classes (JC): 114,252
+Total significant events at FDR < 0.05:     3,741 (3.27%)
+Count expected under the null (5% of tested): 5,712.6
+Observed vs Expected ratio: 0.655 (Significantly BELOW 5% nominal FDR)
+
+Up/Down Split (IncLevelDifference > 0 vs < 0):
+  - Sample 1 Higher (Up):   1,931 (51.62%)
+  - Sample 2 Higher (Down): 1,810 (48.38%)
+  - Exact Binomial Test p-value: 0.0498
+  - Clopper-Pearson 95% CI: [0.5000, 0.5323]
+
+|dPSI| (|IncLevelDifference|) Distribution for Significant Events (N=3,741):
+  - Min (0%):    0.0200
+  - 25% (Q1):    0.7150
+  - 50% (Median):1.0000
+  - 75% (Q3):    1.0000
+  - 90%:         1.0000
+  - 95%:         1.0000
+  - Max (100%):  1.0000
+  - Mean ± SD:   0.8379 ± 0.2374
+
+Saved Lane Control Table: /home/brooklyn/splicing-ml-project/results/models/lane_negative_control_table.csv
+
+Saved required figure: /home/brooklyn/splicing-ml-project/results/models/confusion_matrix_rf_grouped.png
+
+Saved Comprehensive Follow-Up Report: /home/brooklyn/splicing-ml-project/results/models/supervisor_robustness_followup_report.md
+
+ALL FOLLOW-UP ROBUSTNESS ANALYSES COMPLETE.

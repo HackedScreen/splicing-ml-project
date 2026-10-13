@@ -1,8 +1,14 @@
 import os
+os.environ["OMP_NUM_THREADS"] = "2"
+os.environ["OPENBLAS_NUM_THREADS"] = "2"
+os.environ["MKL_NUM_THREADS"] = "2"
+
 import glob
 import joblib
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GroupKFold
 from sklearn.ensemble import RandomForestClassifier
@@ -164,16 +170,19 @@ def main():
         accs, f1s = [], []
         for fold, (t_idx, v_idx) in enumerate(gkf.split(X_sub, y, groups=groups), 1):
             clf = RandomForestClassifier(
-                n_estimators=300, max_depth=None, class_weight="balanced", random_state=42, n_jobs=-1
+                n_estimators=300, max_depth=None, class_weight="balanced", random_state=42, n_jobs=2
             )
             clf.fit(X_sub.iloc[t_idx], y.iloc[t_idx])
             pred = clf.predict(X_sub.iloc[v_idx])
-            accs.append(accuracy_score(y.iloc[v_idx], pred))
-            f1s.append(f1_score(y.iloc[v_idx], pred, average="macro", zero_division=0))
-        mean_acc, std_acc = np.mean(accs), np.std(accs)
-        mean_f1, std_f1 = np.mean(f1s), np.std(f1s)
-        print(f"  -> Mean Accuracy: {mean_acc*100:.2f}% ± {std_acc*100:.2f}%")
-        print(f"  -> Mean Macro-F1: {mean_f1:.4f} ± {std_f1:.4f}")
+            a = accuracy_score(y.iloc[v_idx], pred)
+            f = f1_score(y.iloc[v_idx], pred, average="macro", zero_division=0)
+            accs.append(a)
+            f1s.append(f)
+            print(f"    Fold {fold}: Acc = {a*100:.2f}%, Macro-F1 = {f:.4f}", flush=True)
+        mean_acc, std_acc = np.mean(accs), np.std(accs, ddof=1)
+        mean_f1, std_f1 = np.mean(f1s), np.std(f1s, ddof=1)
+        print(f"  -> Mean Accuracy: {mean_acc*100:.2f}% ± {std_acc*100:.2f}% (ddof=1)", flush=True)
+        print(f"  -> Mean Macro-F1: {mean_f1:.4f} ± {std_f1:.4f} (ddof=1)", flush=True)
 
     # =========================================================================
     # ITEM 4: DummyClassifier Baselines on Grouped Test Set
@@ -208,9 +217,9 @@ def main():
     df_test = df.iloc[test_idx].copy()
 
     # Define coordinate string
-    coord_cols = ["chr", "strand", "exon_start", "exon_end"]
-    df_train["coord_str"] = df_train["chr"].astype(str) + ":" + df_train["exon_start"].astype(str) + "-" + df_train["exon_end"].astype(str) + "(" + df_train["strand"].astype(str) + ")"
-    df_test["coord_str"] = df_test["chr"].astype(str) + ":" + df_test["exon_start"].astype(str) + "-" + df_test["exon_end"].astype(str) + "(" + df_test["strand"].astype(str) + ")"
+    coord_cols = ["chrom", "strand", "exon_start", "exon_end"]
+    df_train["coord_str"] = df_train["chrom"].astype(str) + ":" + df_train["exon_start"].astype(str) + "-" + df_train["exon_end"].astype(str) + "(" + df_train["strand"].astype(str) + ")"
+    df_test["coord_str"] = df_test["chrom"].astype(str) + ":" + df_test["exon_start"].astype(str) + "-" + df_test["exon_end"].astype(str) + "(" + df_test["strand"].astype(str) + ")"
 
     train_coords = set(df_train["coord_str"])
     test_coords = set(df_test["coord_str"])
