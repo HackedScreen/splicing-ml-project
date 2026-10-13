@@ -71,9 +71,15 @@ CLASS_COLORS = {
 # -----------------------------------------------------------------------------
 # 2. Model Loading (Cached)
 # -----------------------------------------------------------------------------
+CANONICAL_CLASSES = ["A3SS", "A5SS", "MXE", "RI", "SE"]
+IDX_TO_LABEL = {i: c for i, c in enumerate(CANONICAL_CLASSES)}
+
 @st.cache_resource
 def load_robust_model():
     candidates = [
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "models", "r1_winner_xgboost.joblib"),
+        os.path.expanduser("~/splicing-ml-project/results/models/r1_winner_xgboost.joblib"),
+        "results/models/r1_winner_xgboost.joblib",
         os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "models", "random_forest_v2.joblib"),
         os.path.expanduser("~/splicing-ml-project/results/models/random_forest_v2.joblib"),
         "results/models/random_forest_v2.joblib",
@@ -84,11 +90,16 @@ def load_robust_model():
     for path in candidates:
         if os.path.exists(path):
             return joblib.load(path), path
-    raise FileNotFoundError("Could not locate random_forest_v2.joblib or random_forest_corrected.joblib")
+    raise FileNotFoundError("Could not locate r1_winner_xgboost.joblib or fallback models")
 
 try:
     model, model_path = load_robust_model()
-    classes = list(model.classes_)
+    if hasattr(model, "classes_") and len(model.classes_) > 0 and isinstance(model.classes_[0], (int, np.integer)):
+        classes = CANONICAL_CLASSES
+        is_integer_model = True
+    else:
+        classes = list(model.classes_)
+        is_integer_model = False
 except Exception as e:
     st.error(f"Failed to load model: {e}")
     st.stop()
@@ -99,28 +110,28 @@ except Exception as e:
 with st.sidebar:
     st.image("https://img.icons8.com/fluency/96/dna-helix.png", width=64)
     st.title("Splicing ML Classifier")
-    st.markdown("**Version:** 2.0 (Biological 23-Feature Architecture)")
-    st.markdown("**Primary Model:** `Random Forest V2 Ensemble`")
+    st.markdown("**Version:** R1 Protocol (Variable-Read-Length, 23 Features)")
+    st.markdown("**Primary Model:** `Winning XGBoost Classifier` (`n_est=300, max_depth=6, lr=0.05`)")
     
     st.markdown("---")
-    st.subheader("📊 Internal KD1 Test Metrics ($N=1,739$)")
+    st.subheader("📊 Held-Out Test Metrics ($N=1,807$)")
     col_m1, col_m2 = st.columns(2)
     with col_m1:
-        st.metric(label="Accuracy", value="74.81%", delta="+0.80 pp")
-        st.metric(label="Macro-F1", value="0.6611", delta="+0.0137")
+        st.metric(label="Accuracy", value="67.68%")
+        st.metric(label="Macro-F1", value="0.6060")
     with col_m2:
-        st.metric(label="ROC-AUC", value="0.9077", delta="+0.0051")
-        st.metric(label="Weighted-F1", value="0.7450")
+        st.metric(label="Split Scheme", value="Gene-Grouped")
+        st.metric(label="Gene Leakage", value="0 (Strict)")
 
     st.markdown("---")
-    st.subheader("🌐 External KD2 Validation ($N=7,080$)")
+    st.subheader("🌐 External KD2 Validation ($N=7,279$)")
     col_k1, col_k2 = st.columns(2)
     with col_k1:
-        st.metric(label="KD2 Accuracy", value="76.82%", delta="+1.00 pp")
-        st.metric(label="KD2 Macro-F1", value="0.7003", delta="+0.0107")
+        st.metric(label="KD2 Accuracy", value="72.73%")
+        st.metric(label="KD2 Macro-F1", value="0.6660")
     with col_k2:
-        st.metric(label="KD2 ROC-AUC", value="0.9180", delta="+0.0060")
-        st.metric(label="KD2 Weighted-F1", value="0.7698")
+        st.metric(label="Seen Genes", value="77.16% Acc")
+        st.metric(label="Unseen Genes", value="64.60% Acc")
 
     st.markdown("---")
     st.subheader("🔬 Dataset Scope & Mechanism")
@@ -223,7 +234,8 @@ with tab1:
                 X_batch = proc_df[ALL_MODEL_FEATURES]
 
                 # Prediction
-                preds = model.predict(X_batch)
+                raw_preds = model.predict(X_batch)
+                preds = [IDX_TO_LABEL[p] if is_integer_model else p for p in raw_preds]
                 probs = model.predict_proba(X_batch)
 
                 results_df = input_df.copy()
@@ -346,7 +358,8 @@ with tab2:
         }
 
         X_single = pd.DataFrame([single_row])[ALL_MODEL_FEATURES]
-        pred_single = model.predict(X_single)[0]
+        raw_pred = model.predict(X_single)[0]
+        top_class_pred = IDX_TO_LABEL[raw_pred] if is_integer_model else raw_pred
         prob_single = model.predict_proba(X_single)[0]
 
         prob_dict = dict(zip(classes, prob_single))

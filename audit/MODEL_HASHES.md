@@ -30,3 +30,13 @@ This document serves as the immutable cryptographic register (SHA256) of all tra
 | `train_test_data_v2.joblib` | Random stratified split dictionary for V2 23-feature dataset ($N_{\text{train}}=6,954$, $N_{\text{test}}=1,739$) | 1,832,292 | `deb032bb939ae60ec95b02a5a7cc4146104e5bc057255f0351529010aa2266cc` |
 | `train_test_data_corrected.joblib` | Random stratified split dictionary for corrected 19-feature dataset ($N_{\text{train}}=6,954$, $N_{\text{test}}=1,739$) | 1,552,978 | `f3f656fe457fe804c0620cd422fc256572fbf548c389e2d333da9dde71380d51` |
 | `train_test_data_v3_maxent.joblib` | Random stratified split dictionary for MaxEntScan dataset ($N_{\text{train}}=6,954$, $N_{\text{test}}=1,739$) | 1,832,280 | `114cd1ea9fd4682b2ff8f01221c075ef02ba8e391322a5c27c2a3a381ac01677` |
+
+---
+
+## 3. R1 Protocol Serialized Models & Split Dictionaries (Variable-Read-Length Cohort)
+
+| Artifact Filename | Description | Size (bytes) | SHA256 Checksum |
+| :--- | :--- | :---: | :--- |
+| `r1_winner_xgboost.joblib` | Primary winning model selected via 5-fold GroupKFold on training groups (XGBoost, `n_est=300, max_depth=6, lr=0.05`, 23 features) | 4,423,284 | `615f295ca6b28dd4a78e1bd7de91254805fc1c5e4dde1eb7c7d071d8763488d0` |
+| `r1_secondary_rf.joblib` | Secondary runner-up model (Random Forest, `n_est=100, max_depth=None`, balanced weights, 23 features) | 26,321,825 | `01ae702a2b857dd075630ab3e8c564bbb811300406ba63b51d15d4e9a159cc31` |
+| `r1_train_test_data_grouped.joblib` | Gene-grouped split dictionary (`GroupShuffleSplit`, 80/20, `random_state=42`, $N_{\text{train}}=7,440$, $N_{\text{test}}=1,807$, 0 gene overlap) | 141,605 | `d06a2f2ab94036ff7dd83a94943c16d2a463b7796807e41f857058eb13fb92f7` |

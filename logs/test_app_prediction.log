@@ -1,0 +1,23 @@
+================================================================================
+STREAMLIT APP MODEL LOAD & TEST SET ROW PREDICTION VERIFICATION
+================================================================================
+RAW LOAD LINE: model = joblib.load('results/models/r1_winner_xgboost.joblib')
+MODEL TYPE: <class 'xgboost.sklearn.XGBClassifier'>
+MODEL n_features_in_: 23
+MODEL classes_: [0 1 2 3 4]
+
+Test Event Index: 3 (Gene: ENSG00000160194, Event: SE_372)
+True Label: SE
+Raw Model Output (Integer Index): 1
+Decoded Predicted Label: A5SS
+Prediction Confidence: 85.80%
+Class Probabilities:
+   A3SS: 1.76%
+   A5SS: 85.80%
+    MXE: 3.26%
+     RI: 3.15%
+     SE: 6.04%
+
+================================================================================
+APP VERIFICATION COMPLETE: SUCCESS
+================================================================================

@@ -1,0 +1,195 @@
+================================================================================
+R2 COMPREHENSIVE EXECUTION & VALIDATION BATTERY
+Git HEAD: b0658bea47feb6ac7e57f314f89804f9b886da69
+================================================================================
+
+================================================================================
+ITEM 1: CONFUSION MATRICES (TEST SET & KD2)
+================================================================================
+Saved winner test confusion matrix to: results/models/r1_confusion_matrix_winner.csv
+
+Confusion Matrix: Winning XGBoost on Held-Out Test Set (N=1,807)
+--------------------------------------------------------------
+True \ Pred     A3SS    A5SS     MXE      RI      SE   Row Sum
+--------------------------------------------------------------
+A3SS             110      17      19      26      44       216
+A5SS              19      36      13      16      30       114
+MXE                9      10     277       1     134       431
+RI                12       5       0     114       1       132
+SE                51      23     146       8     686       914
+--------------------------------------------------------------
+Col Sum          201      91     455     165     895      1807
+--------------------------------------------------------------
+Recomputed Test Accuracy from array: 0.6768123962368566 (67.68%)
+Recomputed Test Macro-F1 from array: 0.6060372912855134
+  Class A3SS F1: 0.5276
+  Class A5SS F1: 0.3512
+  Class MXE F1: 0.6253
+  Class RI F1: 0.7677
+  Class SE F1: 0.7584
+Expected in r1_test_evaluation.csv: Acc=0.6768123962368566, Macro-F1=0.6060372912855134
+ASSERTION PASSED: Test confusion matrix exactly matches r1_test_evaluation.csv.
+Regenerated PNG: results/models/r1_confusion_matrix_winner.png
+
+Saved KD2 confusion matrix to: results/models/r1_confusion_matrix_kd2.csv
+
+Confusion Matrix: Winning XGBoost on Full KD2 Cohort (N=7,279)
+--------------------------------------------------------------
+True \ Pred     A3SS    A5SS     MXE      RI      SE   Row Sum
+--------------------------------------------------------------
+A3SS             350      30      43      49     113       585
+A5SS              29     229      22      32      68       380
+MXE               54      31     878       6     390      1359
+RI                20      16       0     413       7       456
+SE               240     118     658      59    3424      4499
+--------------------------------------------------------------
+Col Sum          693     424    1601     559    4002      7279
+--------------------------------------------------------------
+Recomputed KD2 Accuracy from array: 0.7272977057288089 (72.73%)
+Recomputed KD2 Macro-F1 from array: 0.6659942410744286
+  Class A3SS F1: 0.5477
+  Class A5SS F1: 0.5697
+  Class MXE F1: 0.5932
+  Class RI F1: 0.8138
+  Class SE F1: 0.8056
+Expected in r1_kd2_evaluation.csv: Acc=0.7272977057288089, Macro-F1=0.6659942410744286
+ASSERTION PASSED: KD2 confusion matrix exactly matches r1_kd2_evaluation.csv.
+Regenerated PNG: results/models/r1_confusion_matrix_kd2.png
+
+================================================================================
+ITEM 2: FEATURE ABLATIONS UNDER 5-FOLD GroupKFold
+Git HEAD: b0658bea47feb6ac7e57f314f89804f9b886da69
+Model: XGBClassifier (XGBoost)
+Hyperparameters: n_estimators=300, max_depth=6, learning_rate=0.05, tree_method='hist', random_state=42
+Standard Deviation Convention: Sample SD with ddof=1
+================================================================================
+
+--- Subset: (A) All 23 Features (N_Features = 23) ---
+  Fold 1: Accuracy = 66.92% (0.6692), Macro-F1 = 0.5855
+  Fold 2: Accuracy = 68.05% (0.6805), Macro-F1 = 0.6023
+  Fold 3: Accuracy = 66.36% (0.6636), Macro-F1 = 0.5740
+  Fold 4: Accuracy = 66.09% (0.6609), Macro-F1 = 0.5787
+  Fold 5: Accuracy = 67.44% (0.6744), Macro-F1 = 0.5991
+  Summary (ddof=1): Mean Accuracy = 66.97% ± 0.80%, Mean Macro-F1 = 0.5879 ± 0.0124
+
+--- Subset: (B) All minus exon_length (N_Features = 22) ---
+  Fold 1: Accuracy = 61.78% (0.6178), Macro-F1 = 0.4965
+  Fold 2: Accuracy = 62.86% (0.6286), Macro-F1 = 0.5273
+  Fold 3: Accuracy = 62.09% (0.6209), Macro-F1 = 0.4939
+  Fold 4: Accuracy = 62.74% (0.6274), Macro-F1 = 0.5102
+  Fold 5: Accuracy = 63.60% (0.6360), Macro-F1 = 0.5088
+  Summary (ddof=1): Mean Accuracy = 62.61% ± 0.71%, Mean Macro-F1 = 0.5073 ± 0.0133
+
+--- Subset: (C) Sequence/Structure Only (12 feats) (N_Features = 12) ---
+  Fold 1: Accuracy = 48.00% (0.4800), Macro-F1 = 0.4209
+  Fold 2: Accuracy = 48.76% (0.4876), Macro-F1 = 0.4612
+  Fold 3: Accuracy = 46.67% (0.4667), Macro-F1 = 0.4213
+  Fold 4: Accuracy = 48.67% (0.4867), Macro-F1 = 0.4350
+  Fold 5: Accuracy = 48.46% (0.4846), Macro-F1 = 0.4450
+  Summary (ddof=1): Mean Accuracy = 48.11% ± 0.86%, Mean Macro-F1 = 0.4367 ± 0.0170
+
+--- Subset: (D) Sequence/Structure minus exon_length (11 feats) (N_Features = 11) ---
+  Fold 1: Accuracy = 37.14% (0.3714), Macro-F1 = 0.2854
+  Fold 2: Accuracy = 37.08% (0.3708), Macro-F1 = 0.3083
+  Fold 3: Accuracy = 36.18% (0.3618), Macro-F1 = 0.2727
+  Fold 4: Accuracy = 39.26% (0.3926), Macro-F1 = 0.3073
+  Fold 5: Accuracy = 39.26% (0.3926), Macro-F1 = 0.3083
+  Summary (ddof=1): Mean Accuracy = 37.79% ± 1.40%, Mean Macro-F1 = 0.2964 ± 0.0164
+
+--- Subset: (E) Coverage/PSI Only (11 feats) (N_Features = 11) ---
+  Fold 1: Accuracy = 55.08% (0.5508), Macro-F1 = 0.4144
+  Fold 2: Accuracy = 55.30% (0.5530), Macro-F1 = 0.4129
+  Fold 3: Accuracy = 53.70% (0.5370), Macro-F1 = 0.4083
+  Fold 4: Accuracy = 53.70% (0.5370), Macro-F1 = 0.4129
+  Fold 5: Accuracy = 56.46% (0.5646), Macro-F1 = 0.4040
+  Summary (ddof=1): Mean Accuracy = 54.85% ± 1.17%, Mean Macro-F1 = 0.4105 ± 0.0043
+
+================================================================================
+ITEM 3: LOGISTIC REGRESSION BASELINE
+Status: Baseline comparator only — TOOK NO PART IN MODEL SELECTION
+Candidates for primary selection were strictly pre-registered RF and XGBoost
+Pipeline: StandardScaler -> LogisticRegression(class_weight='balanced', max_iter=1000, random_state=42)
+Tuning grid: C in [0.1, 1, 10] evaluated strictly on training groups via 5-fold GroupKFold
+================================================================================
+  C = 0.1  : CV Mean Acc = 47.51% ± 1.98%, CV Mean Macro-F1 = 0.4120 ± 0.0132 (ddof=1)
+  C = 1.0  : CV Mean Acc = 47.77% ± 2.39%, CV Mean Macro-F1 = 0.4119 ± 0.0205 (ddof=1)
+  C = 10.0 : CV Mean Acc = 47.62% ± 2.39%, CV Mean Macro-F1 = 0.4111 ± 0.0222 (ddof=1)
+
+Optimal LR parameter chosen by training CV: C = 0.1 (Macro-F1 = 0.4120)
+
+--- Held-Out Test Set Evaluation (N = 1,807) ---
+  LR Model: Accuracy = 47.59%, Macro-F1 = 0.4228
+  Majority Baseline (SE): Accuracy = 50.58%, Macro-F1 = 0.1344
+    Class A3SS F1: 0.3550
+    Class A5SS F1: 0.1474
+    Class MXE F1: 0.5035
+    Class RI F1: 0.5781
+    Class SE F1: 0.5299
+
+--- KD2: Full KD2 Cohort (N = 7,279, 100.00%) ---
+  LR Model: Accuracy = 45.01%, Macro-F1 = 0.3972
+  Majority Baseline (SE): Accuracy = 61.81%, Macro-F1 = 0.1528
+    Class A3SS F1: 0.2937
+    Class A5SS F1: 0.2151
+    Class MXE F1: 0.3527
+    Class RI F1: 0.5755
+    Class SE F1: 0.5492
+
+--- KD2: Seen-Gene Stratum (in KD1 Train) (N = 4,711, 64.72%) ---
+  LR Model: Accuracy = 45.70%, Macro-F1 = 0.3968
+  Majority Baseline (SE): Accuracy = 62.13%, Macro-F1 = 0.1533
+    Class A3SS F1: 0.3014
+    Class A5SS F1: 0.2015
+    Class MXE F1: 0.3580
+    Class RI F1: 0.5608
+    Class SE F1: 0.5621
+
+--- KD2: Unseen-Gene Stratum (Absent from KD1 Train) (N = 2,568, 35.28%) ---
+  LR Model: Accuracy = 43.73%, Macro-F1 = 0.3962
+  Majority Baseline (SE): Accuracy = 61.21%, Macro-F1 = 0.1519
+    Class A3SS F1: 0.2817
+    Class A5SS F1: 0.2391
+    Class MXE F1: 0.3424
+    Class RI F1: 0.5939
+    Class SE F1: 0.5240
+
+================================================================================
+ITEM 4: XGBOOST VS RF COMPARISON & GENE-LEVEL PAIRED BOOTSTRAP
+================================================================================
+
+A. Per-Fold 5-Fold GroupKFold Cross-Validation on Training Groups (N=7,440):
+  Fold 1:
+    XGBoost Winner:       Acc = 68.55%, Macro-F1 = 0.6004
+    Random Forest Runner: Acc = 69.62%, Macro-F1 = 0.5872
+  Fold 2:
+    XGBoost Winner:       Acc = 66.80%, Macro-F1 = 0.5969
+    Random Forest Runner: Acc = 68.01%, Macro-F1 = 0.6061
+  Fold 3:
+    XGBoost Winner:       Acc = 65.59%, Macro-F1 = 0.5896
+    Random Forest Runner: Acc = 66.60%, Macro-F1 = 0.5917
+  Fold 4:
+    XGBoost Winner:       Acc = 67.94%, Macro-F1 = 0.5740
+    Random Forest Runner: Acc = 69.09%, Macro-F1 = 0.5726
+  Fold 5:
+    XGBoost Winner:       Acc = 65.79%, Macro-F1 = 0.5550
+    Random Forest Runner: Acc = 64.58%, Macro-F1 = 0.5365
+
+CV Summary (ddof=1):
+  XGBoost Winner:       Mean Acc = 66.94% ± 1.30%, Mean Macro-F1 = 0.5832 ± 0.0187
+  Random Forest Runner: Mean Acc = 67.58% ± 2.04%, Mean Macro-F1 = 0.5788 ± 0.0265
+
+B. Gene-Level Paired Cluster Bootstrap (1,000 Resamples on Held-Out Test Set):
+  Observed Held-Out Test Metrics:
+    XGBoost Macro-F1:       0.6060
+    Random Forest Macro-F1: 0.5651
+    Observed Difference (ΔF1 = XGB - RF): +0.0410 (+4.10 pp)
+
+  Bootstrap Results (1,000 Gene Clusters Resampled):
+    Bootstrap Mean Difference (ΔF1): +0.0404
+    Bootstrap Std (ddof=1):           0.0147
+    95% Empirical Percentile CI:      [+0.0119, +0.0697] ([+1.19 pp, +6.97 pp])
+    Empirical p-value (ΔF1 <= 0):     0.0010
+
+================================================================================
+R2 BATTERY COMPLETE
+================================================================================
