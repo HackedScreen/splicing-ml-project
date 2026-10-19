@@ -1,0 +1,5 @@
+Split_Scheme,Model,Hyperparameters,Test_N,Accuracy,Accuracy_Pct,Macro_F1,Test_Gene_Leakage_Count,Test_Gene_Leakage_Pct,Events_In_Multi_Event_Genes_Pct
+Random (80/20 Stratified),XGBoost,"n_estimators=300, max_depth=6, learning_rate=0.05",1850,0.7697297297297298,76.97%,0.6633313474372828,1404,75.89189189189189,79.98269709094842
+Random (80/20 Stratified),Random Forest,"n_estimators=100, max_depth=None",1850,0.7702702702702703,77.03%,0.6563508676506313,1404,75.89189189189189,79.98269709094842
+Gene-Grouped (80/20),XGBoost,"n_estimators=300, max_depth=6, learning_rate=0.05",1807,0.676812,67.68%,0.606037,0,0.0,79.98269709094842
+Gene-Grouped (80/20),Random Forest,"n_estimators=100, max_depth=None",1807,0.662424,66.24%,0.565081,0,0.0,79.98269709094842

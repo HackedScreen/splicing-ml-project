@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """
 scripts/test_app_prediction.py
-Tests the app's loading of r1_winner_xgboost.joblib and runs one prediction on a test-set row.
+
+Tests the app's prediction function on all 1,807 held-out test rows.
+Asserts that it reproduces 67.68% accuracy and macro-F1 0.6060.
+Prints the integer-to-label mapping used.
 """
 
 import os
+import sys
 import joblib
 import pandas as pd
 import numpy as np
+from sklearn.metrics import accuracy_score, f1_score
 
 def main():
     repo_dir = "/home/brooklyn/splicing-ml-project"
@@ -15,29 +20,41 @@ def main():
         os.chdir(repo_dir)
 
     print("=" * 80)
-    print("STREAMLIT APP MODEL LOAD & TEST SET ROW PREDICTION VERIFICATION")
+    print("STREAMLIT APP PREDICTION FUNCTION: EVALUATION ON ALL 1,807 HELD-OUT TEST ROWS")
     print("=" * 80)
 
-    # 1. Load model using exact candidate line from app/streamlit_app.py
+    # 1. Load model as done by the Streamlit app
     load_path = "results/models/r1_winner_xgboost.joblib"
     model = joblib.load(load_path)
-    print(f"RAW LOAD LINE: model = joblib.load('{load_path}')")
-    print(f"MODEL TYPE: {type(model)}")
-    print(f"MODEL n_features_in_: {model.n_features_in_}")
-    print(f"MODEL classes_: {model.classes_}")
+    print(f"Loaded Model: {load_path}")
+    print(f"Model Class: {type(model)}")
+    print(f"Model Classes: {model.classes_}")
 
-    # 2. Load test set row
+    # Canonical classes and mapping
+    CANONICAL_CLASSES = ["A3SS", "A5SS", "MXE", "RI", "SE"]
+    IDX_TO_LABEL = {i: c for i, c in enumerate(CANONICAL_CLASSES)}
+    print("\nInteger-to-Label Mapping Used:")
+    for idx, lbl in IDX_TO_LABEL.items():
+        print(f"  Integer {idx} -> Label '{lbl}'")
+
+    # 2. Load held-out test set
     split_data = joblib.load("results/models/r1_train_test_data_grouped.joblib")
     test_idx = split_data["test_idx"]
+    print(f"\nNumber of held-out test rows: {len(test_idx):,}")
 
     df_kd1 = pd.read_csv("results/features/feature_matrix_v2.csv")
-    strand_dummies = pd.get_dummies(df_kd1["strand"], prefix="strand", dtype=float)
-    if "strand_+" not in strand_dummies.columns: strand_dummies["strand_+"] = 0.0
-    if "strand_-" not in strand_dummies.columns: strand_dummies["strand_-"] = 0.0
-    df_kd1 = pd.concat([df_kd1, strand_dummies[["strand_+", "strand_-"]]], axis=1)
 
+    # 3. Apply the Streamlit app's exact batch preprocessing pipeline
+    input_df = df_kd1.iloc[test_idx].copy()
+    y_true = input_df["label"].values
+
+    proc_df = input_df.copy()
     psi_cols = ["psi_control_mean", "psi_control_var", "psi_kd_mean", "psi_kd_var", "dpsi"]
-    df_kd1[psi_cols] = df_kd1[psi_cols].fillna(0.0)
+    proc_df[psi_cols] = proc_df[psi_cols].fillna(0.0)
+
+    # Strand one-hot encoding exactly as in app
+    proc_df["strand_+"] = (proc_df["strand"].astype(str).str.strip() == "+").astype(float)
+    proc_df["strand_-"] = (proc_df["strand"].astype(str).str.strip() == "-").astype(float)
 
     feat_23 = [
         "exon_length", "gc_exon", "gc_upstream_100bp", "gc_downstream_100bp",
@@ -49,33 +66,39 @@ def main():
         "psi_control_mean", "psi_control_var", "psi_kd_mean", "psi_kd_var",
         "dpsi", "strand_+", "strand_-"
     ]
+    X_batch = proc_df[feat_23]
 
-    canonical_classes = ["A3SS", "A5SS", "MXE", "RI", "SE"]
-    idx_to_label = {i: c for i, c in enumerate(canonical_classes)}
+    # 4. App's prediction logic
+    raw_preds = model.predict(X_batch)
+    preds = [IDX_TO_LABEL[p] for p in raw_preds]
+    probs = model.predict_proba(X_batch)
 
-    # Pick the first test set event row
-    first_test_row_idx = test_idx[0]
-    test_row_df = df_kd1.iloc[[first_test_row_idx]][feat_23]
-    true_label = df_kd1.iloc[first_test_row_idx]["label"]
-    gene_id = df_kd1.iloc[first_test_row_idx]["gene_id"]
-    event_id = df_kd1.iloc[first_test_row_idx].get("event_id", f"row_{first_test_row_idx}")
+    # 5. Compute metrics
+    acc = accuracy_score(y_true, preds)
+    macro_f1 = f1_score(y_true, preds, average="macro")
 
-    print(f"\nTest Event Index: {first_test_row_idx} (Gene: {gene_id}, Event: {event_id})")
-    print(f"True Label: {true_label}")
+    print("\n" + "-" * 60)
+    print("HELD-OUT TEST EVALUATION RESULTS:")
+    print("-" * 60)
+    print(f"Accuracy:  {acc*100:.2f}% ({acc:.6f})")
+    print(f"Macro-F1:  {macro_f1:.4f} ({macro_f1:.6f})")
 
-    raw_pred = model.predict(test_row_df)[0]
-    pred_label = idx_to_label[raw_pred]
-    probs = model.predict_proba(test_row_df)[0]
+    # Per-class F1
+    for c in CANONICAL_CLASSES:
+        f1_c = f1_score(y_true == c, np.array(preds) == c)
+        print(f"  Class {c:>5} F1: {f1_c:.4f}")
 
-    print(f"Raw Model Output (Integer Index): {raw_pred}")
-    print(f"Decoded Predicted Label: {pred_label}")
-    print(f"Prediction Confidence: {np.max(probs)*100:.2f}%")
-    print("Class Probabilities:")
-    for c, p in zip(canonical_classes, probs):
-        print(f"  {c:>5}: {p*100:.2f}%")
+    # Assertions
+    expected_acc = 0.6768123962368566
+    expected_f1 = 0.6060372912855134
+
+    assert abs(acc - expected_acc) < 1e-4, f"Accuracy mismatch: got {acc}, expected {expected_acc}"
+    assert abs(macro_f1 - expected_f1) < 1e-4, f"Macro-F1 mismatch: got {macro_f1}, expected {expected_f1}"
+    assert f"{acc*100:.2f}%" == "67.68%", f"Formatted accuracy is not 67.68%: got {acc*100:.2f}%"
+    assert f"{macro_f1:.4f}" == "0.6060", f"Formatted macro-F1 is not 0.6060: got {macro_f1:.4f}"
 
     print("\n" + "=" * 80)
-    print("APP VERIFICATION COMPLETE: SUCCESS")
+    print("ALL ASSERTIONS PASSED: 67.68% ACCURACY AND 0.6060 MACRO-F1 EXACTLY REPRODUCED")
     print("=" * 80)
 
 if __name__ == "__main__":

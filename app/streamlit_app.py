@@ -115,36 +115,29 @@ with st.sidebar:
     
     st.markdown("---")
     st.subheader("📊 Held-Out Test Metrics ($N=1,807$)")
-    col_m1, col_m2 = st.columns(2)
-    with col_m1:
-        st.metric(label="Accuracy", value="67.68%")
-        st.metric(label="Macro-F1", value="0.6060")
-    with col_m2:
-        st.metric(label="Split Scheme", value="Gene-Grouped")
-        st.metric(label="Gene Leakage", value="0 (Strict)")
+    st.markdown("- **XGBoost test 67.68% / 0.606** (macro-F1)")
+    st.markdown("- **Majority baseline:** 50.58% accuracy / 0.134 macro-F1 (SE majority)")
+    st.markdown("- **Split:** Gene-grouped (0 shared genes)")
 
     st.markdown("---")
-    st.subheader("🌐 External KD2 Validation ($N=7,279$)")
-    col_k1, col_k2 = st.columns(2)
-    with col_k1:
-        st.metric(label="KD2 Accuracy", value="72.73%")
-        st.metric(label="KD2 Macro-F1", value="0.6660")
-    with col_k2:
-        st.metric(label="Seen Genes", value="77.16% Acc")
-        st.metric(label="Unseen Genes", value="64.60% Acc")
+    st.subheader("🌐 Second Knockdown Construct (KD2, $N=7,279$)")
+    st.markdown("- **KD2 72.73% / 0.666** (majority baseline 61.81% / 0.153)")
+    st.markdown("- **Seen genes:** 77.16% vs 62.13% baseline")
+    st.markdown("- **Unseen genes:** (KD2: 64.6% vs 61.2% baseline) (64.60% vs 61.21%)")
+
+    st.markdown("---")
+    st.warning(
+        "⚠️ **Model Calibration & Probability Scores**:\n\n"
+        "Model output probabilities are uncalibrated scores (Brier score: 0.450 uncalibrated vs 0.435 calibrated). "
+        "Probabilities represent relative ranking scores rather than calibrated posterior probabilities."
+    )
 
     st.markdown("---")
     st.subheader("🔬 Dataset Scope & Mechanism")
     st.info(
         "**Biological Context:**\n\n"
         "HNRNPC knockdown vs. Control, HeLa cells (*ArrayExpress E-MTAB-1147* / *Zarnack et al., 2013*).\n\n"
-        "Augmented with **HNRNPC U-tract binding motif density** in 100 bp flanking splice windows, capturing genuine competitive repression against U2AF65."
-    )
-
-    st.markdown("---")
-    st.warning(
-        "⚠️ **Caution on Multi-Class Boundaries**:\n\n"
-        "Alternative splice sites (A5SS, 50% F1; A3SS, 52% F1) show higher boundary ambiguity than Skipped Exons (SE, 80% F1) and Mutually Exclusive Exons (MXE, 77% F1)."
+        "Augmented with **HNRNPC U-tract binding motif density** in 100 bp flanking splice windows, capturing competitive repression against U2AF65."
     )
 
     st.caption("BSc Dissertation Project Pipeline • §3–§4 Deployment Demonstration")

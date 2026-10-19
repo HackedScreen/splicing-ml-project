@@ -535,3 +535,37 @@ Updated `data/reference/manifest.csv` based on ENA `sample_accession` cross-chec
 **Output:** Test confusion matrix (Acc=67.68%, Macro-F1=0.6060) and KD2 confusion matrix (Acc=72.73%, Macro-F1=0.6660) arrays verified; 5 ablation subsets evaluated across 5 folds; LR baseline tuned to C=0.1 (Test Acc=47.59%, Macro-F1=0.4228; KD2 Acc=45.01%, Macro-F1=0.3972); paired gene cluster bootstrap macro-F1 difference ΔF1 = +0.0410 (+4.10 pp, 95% CI: [+0.0119, +0.0697], p=0.0010); Streamlit app verified with single test row prediction.
 **Dissertation section:** §3.7, §4.1, §4.3, §4.5, §4.6, Appendix A.3
 
+
+### [Audit Correction] Correction of preliminary archive status, metadata table retention, and original mapping assumption — 2026-10-13
+**Command:**
+`git log -S 'ERR127302' --oneline -p` and audit of `results/splicing/` and `data/reference/`
+**Rationale:**
+Correction entry addressing lines 12–16 and 374–375 of `docs/COMMAND_LOG.md`. Those lines state that preliminary outputs from the unintentional KD1-vs-KD2 preliminary analysis are retained intact in the repository. An exhaustive audit of the directory structure reveals:
+1. `results/splicing/` does not retain the full preliminary outputs intact: only `results/splicing/b1.txt`, `results/splicing/b2.txt`, the temporary folder `results/splicing/tmp/`, and preliminary logs in `logs/` (e.g. `logs/rmats.log`) exist. Differential splicing call files (`SE.MATS.JC.txt`, etc.) for that preliminary run are not present.
+2. No command deleting the preliminary output files was ever recorded in `docs/COMMAND_LOG.md` or git history; the omission was unrecorded.
+3. `data/reference/E-MTAB-1147_runs.tsv` was overwritten in place during subsequent metadata fetches, so the original September 1 run metadata table is not retained.
+4. Below are the verbatim raw log and git lines from commit `860b7bb8c5fa0bc80bc8a9b233a0bcf4eec57849` recording the original Control/KD1 mapping assumption:
+
+```
+commit 860b7bb8c5fa0bc80bc8a9b233a0bcf4eec57849
+Date:   Wed Sep 24 16:04:12 2026 +0200
+    Final synced pipeline - 75.8% KD2 external validation
+
+[From docs/COMMAND_LOG.md]:
+### [Stage 1] Authoritative run metadata fetched — 2026-09-01
+**Command:**
+`scripts/01a_fetch_run_metadata.sh`
+**Rationale:** Fetch study ERP001458 (E-MTAB-1147) metadata directly from ENA API to verify sample run accessions, replicate mapping, and paired-end layouts.
+**Output:** Fetched 6 paired-end runs (Control: ERR127302, ERR127303; KD1: ERR127304, ERR127305; KD2: ERR127306, ERR127307) totaling ~114.9M paired-end 72 bp reads saved to `data/reference/E-MTAB-1147_runs.tsv`.
+**Dissertation section:** §3.2.2
+
+### [Stage 1] Sample manifest constructed — 2026-09-01
+**Command:**
+`data/reference/manifest.csv` populated from `manifest_TEMPLATE.csv`
+**Rationale:** Associate confirmed run accessions with experimental design (Control x2 vs KD1 x2 replicates). KD2 construct held back as independent validation data.
+**Output:** Manifest confirmed: Control (ERR127302, ERR127303) and KD1 (ERR127304, ERR127305).
+**Dissertation section:** §3.2.1
+```
+
+**Output:** Audit correction logged. Detailed file retention status listed, absence of deletion record documented, metadata overwrite noted, and authentic original mapping assumption preserved verbatim.
+**Dissertation section:** §3.2.1, Appendix A.3

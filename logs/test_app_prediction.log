@@ -1,23 +1,30 @@
 ================================================================================
-STREAMLIT APP MODEL LOAD & TEST SET ROW PREDICTION VERIFICATION
+STREAMLIT APP PREDICTION FUNCTION: EVALUATION ON ALL 1,807 HELD-OUT TEST ROWS
 ================================================================================
-RAW LOAD LINE: model = joblib.load('results/models/r1_winner_xgboost.joblib')
-MODEL TYPE: <class 'xgboost.sklearn.XGBClassifier'>
-MODEL n_features_in_: 23
-MODEL classes_: [0 1 2 3 4]
+Loaded Model: results/models/r1_winner_xgboost.joblib
+Model Class: <class 'xgboost.sklearn.XGBClassifier'>
+Model Classes: [0 1 2 3 4]
 
-Test Event Index: 3 (Gene: ENSG00000160194, Event: SE_372)
-True Label: SE
-Raw Model Output (Integer Index): 1
-Decoded Predicted Label: A5SS
-Prediction Confidence: 85.80%
-Class Probabilities:
-   A3SS: 1.76%
-   A5SS: 85.80%
-    MXE: 3.26%
-     RI: 3.15%
-     SE: 6.04%
+Integer-to-Label Mapping Used:
+  Integer 0 -> Label 'A3SS'
+  Integer 1 -> Label 'A5SS'
+  Integer 2 -> Label 'MXE'
+  Integer 3 -> Label 'RI'
+  Integer 4 -> Label 'SE'
+
+Number of held-out test rows: 1,807
+
+------------------------------------------------------------
+HELD-OUT TEST EVALUATION RESULTS:
+------------------------------------------------------------
+Accuracy:  67.68% (0.676812)
+Macro-F1:  0.6060 (0.606037)
+  Class  A3SS F1: 0.5276
+  Class  A5SS F1: 0.3512
+  Class   MXE F1: 0.6253
+  Class    RI F1: 0.7677
+  Class    SE F1: 0.7584
 
 ================================================================================
-APP VERIFICATION COMPLETE: SUCCESS
+ALL ASSERTIONS PASSED: 67.68% ACCURACY AND 0.6060 MACRO-F1 EXACTLY REPRODUCED
 ================================================================================

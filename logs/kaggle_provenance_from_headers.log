@@ -1,0 +1,226 @@
+================================================================================
+KAGGLE PROVENANCE: SAMTOOLS @PG HEADERS ACROSS ALL BAMS IN results/alignment/
+================================================================================
+--- BAM: results/alignment/Control_rep1.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/Control_rep1.sam --read-lengths 72,70,65,69,64,71,60,68,55,50,59,67,54,63,45,49,58,44,40,62,66,57,53,61,47,52,51,48,56,43,39,37,42,38,36,41,46 -1 /tmp/613.inpipe1 -2 /tmp/613.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/Control_rep1.sorted.bam /root/build/alignment/Control_rep1.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -H results/alignment/Control_rep1.sorted.bam
+
+--- BAM: results/alignment/Control_rep1_downsampled.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/Control_rep1.sam --read-lengths 72,70,65,69,64,71,60,68,55,50,59,67,54,63,45,49,58,44,40,62,66,57,53,61,47,52,51,48,56,43,39,37,42,38,36,41,46 -1 /tmp/613.inpipe1 -2 /tmp/613.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/Control_rep1.sorted.bam /root/build/alignment/Control_rep1.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -@ 4 -s 42.469 -b -o results/alignment/Control_rep1_downsampled.sorted.bam results/alignment/Control_rep1.sorted.bam
+@PG	ID:samtools.2	PN:samtools	PP:samtools.1	VN:1.24	CL:samtools view -H results/alignment/Control_rep1_downsampled.sorted.bam
+
+--- BAM: results/alignment/Control_rep2.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/Control_rep2.sam --read-lengths 72,70,65,71,69,60,64,68,50,55,59,45,63,67,62,49,58,53,54,66,57,48,56,40,46,51,39,52,61,44,43,42,37,47,41,38,36 -1 /tmp/748.inpipe1 -2 /tmp/748.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/Control_rep2.sorted.bam /root/build/alignment/Control_rep2.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -H results/alignment/Control_rep2.sorted.bam
+
+--- BAM: results/alignment/Control_rep2_downsampled.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/Control_rep2.sam --read-lengths 72,70,65,71,69,60,64,68,50,55,59,45,63,67,62,49,58,53,54,66,57,48,56,40,46,51,39,52,61,44,43,42,37,47,41,38,36 -1 /tmp/748.inpipe1 -2 /tmp/748.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/Control_rep2.sorted.bam /root/build/alignment/Control_rep2.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -@ 4 -s 42.469 -b -o results/alignment/Control_rep2_downsampled.sorted.bam results/alignment/Control_rep2.sorted.bam
+@PG	ID:samtools.2	PN:samtools	PP:samtools.1	VN:1.24	CL:samtools view -H results/alignment/Control_rep2_downsampled.sorted.bam
+
+--- BAM: results/alignment/ERR127302.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/ERR127302.sam --read-lengths 72,70,65,69,60,64,71,55,50,59,68,67,54,63,45,53,62,40,58,49,66,48,57,56,43,44,61,39,52,47,46,41,42,38,36,51,37 -1 /tmp/609.inpipe1 -2 /tmp/609.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/ERR127302.sorted.bam /root/build/alignment/ERR127302.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -H results/alignment/ERR127302.sorted.bam
+
+--- BAM: results/alignment/ERR127303.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/ERR127303.sam --read-lengths 72,70,65,60,55,50,45,59,69,64,40,49,54,68,63,58,53,71,67,44,39,57,62,61,48,43,66,56,51,52,38,42,46,47,37,36,41 -1 /tmp/705.inpipe1 -2 /tmp/705.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/ERR127303.sorted.bam /root/build/alignment/ERR127303.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -H results/alignment/ERR127303.sorted.bam
+
+--- BAM: results/alignment/ERR127304.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/ERR127304.sam --read-lengths 72,65,70,60,55,50,64,59,69,45,54,68,40,63,49,71,44,39,48,58,53,57,62,67,66,61,52,43,51,46,38,56,47,37,42,36,41 -1 /tmp/801.inpipe1 -2 /tmp/801.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/ERR127304.sorted.bam /root/build/alignment/ERR127304.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -H results/alignment/ERR127304.sorted.bam
+
+--- BAM: results/alignment/ERR127305.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/ERR127305.sam --read-lengths 72,70,65,69,55,60,64,59,63,50,71,58,68,45,66,54,49,62,53,44,40,67,61,48,57,56,47,39,52,37,46,43,42,38,41,51,36 -1 /tmp/899.inpipe1 -2 /tmp/899.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/ERR127305.sorted.bam /root/build/alignment/ERR127305.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -H results/alignment/ERR127305.sorted.bam
+
+--- BAM: results/alignment/ERR127306.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/Control_rep1.sam --read-lengths 72,70,65,69,64,71,60,68,55,50,59,67,54,63,45,49,58,44,40,62,66,57,53,61,47,52,51,48,56,43,39,37,42,38,36,41,46 -1 /tmp/613.inpipe1 -2 /tmp/613.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/Control_rep1.sorted.bam /root/build/alignment/Control_rep1.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -H results/alignment/ERR127306.sorted.bam
+
+--- BAM: results/alignment/ERR127307.sorted.bam ---
+@PG	ID:hisat2	PN:hisat2	VN:2.2.1	CL:"/opt/miniforge3/bin/hisat2-align-s --wrapper basic-0 -x grch38_index_linear -p 4 --dta --known-splicesite-infile splicesites.tsv -S /root/build/alignment/Control_rep1.sam --read-lengths 72,70,65,69,64,71,60,68,55,50,59,67,54,63,45,49,58,44,40,62,66,57,53,61,47,52,51,48,56,43,39,37,42,38,36,41,46 -1 /tmp/613.inpipe1 -2 /tmp/613.inpipe2"
+@PG	ID:samtools	PN:samtools	PP:hisat2	VN:1.24	CL:samtools sort -@ 4 -o /root/build/alignment/Control_rep1.sorted.bam /root/build/alignment/Control_rep1.sam
+@PG	ID:samtools.1	PN:samtools	PP:samtools	VN:1.24	CL:samtools view -H results/alignment/ERR127307.sorted.bam
+
+================================================================================
+FIRST 15 LINES OF *_trimmomatic.log IN results/alignment/
+================================================================================
+--- Trimmomatic Log: results/alignment/Control_rep1_trimmomatic.log ---
+TrimmomaticPE: Started with arguments:
+ -threads 4 -phred33 Control_rep1_1.fastq.gz Control_rep1_2.fastq.gz Control_rep1_1_paired.fastq.gz Control_rep1_1_unpaired.fastq.gz Control_rep1_2_paired.fastq.gz Control_rep1_2_unpaired.fastq.gz ILLUMINACLIP:/opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+ILLUMINACLIP: Using adapter file from user-specified absolute path: /opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 61480994 Both Surviving: 55453742 (90.20%) Forward Only Surviving: 4185860 (6.81%) Reverse Only Surviving: 1282008 (2.09%) Dropped: 559384 (0.91%)
+TrimmomaticPE: Completed successfully
+
+--- Trimmomatic Log: results/alignment/Control_rep2_trimmomatic.log ---
+TrimmomaticPE: Started with arguments:
+ -threads 4 -phred33 Control_rep2_1.fastq.gz Control_rep2_2.fastq.gz Control_rep2_1_paired.fastq.gz Control_rep2_1_unpaired.fastq.gz Control_rep2_2_paired.fastq.gz Control_rep2_2_unpaired.fastq.gz ILLUMINACLIP:/opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+ILLUMINACLIP: Using adapter file from user-specified absolute path: /opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 62265044 Both Surviving: 57186429 (91.84%) Forward Only Surviving: 3442695 (5.53%) Reverse Only Surviving: 1148313 (1.84%) Dropped: 487607 (0.78%)
+TrimmomaticPE: Completed successfully
+
+--- Trimmomatic Log: results/alignment/ERR127302_trimmomatic.log ---
+TrimmomaticPE: Started with arguments:
+ -threads 4 -phred33 ERR127302_1.fastq.gz ERR127302_2.fastq.gz ERR127302_1_paired.fastq.gz ERR127302_1_unpaired.fastq.gz ERR127302_2_paired.fastq.gz ERR127302_2_unpaired.fastq.gz ILLUMINACLIP:/opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+ILLUMINACLIP: Using adapter file from user-specified absolute path: /opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 29741852 Both Surviving: 26069721 (87.65%) Forward Only Surviving: 2419191 (8.13%) Reverse Only Surviving: 903539 (3.04%) Dropped: 349401 (1.17%)
+TrimmomaticPE: Completed successfully
+
+--- Trimmomatic Log: results/alignment/ERR127303_trimmomatic.log ---
+TrimmomaticPE: Started with arguments:
+ -threads 4 -phred33 ERR127303_1.fastq.gz ERR127303_2.fastq.gz ERR127303_1_paired.fastq.gz ERR127303_1_unpaired.fastq.gz ERR127303_2_paired.fastq.gz ERR127303_2_unpaired.fastq.gz ILLUMINACLIP:/opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+ILLUMINACLIP: Using adapter file from user-specified absolute path: /opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 32665567 Both Surviving: 26758217 (81.92%) Forward Only Surviving: 3659196 (11.20%) Reverse Only Surviving: 1488981 (4.56%) Dropped: 759173 (2.32%)
+TrimmomaticPE: Completed successfully
+
+--- Trimmomatic Log: results/alignment/ERR127304_trimmomatic.log ---
+TrimmomaticPE: Started with arguments:
+ -threads 4 -phred33 ERR127304_1.fastq.gz ERR127304_2.fastq.gz ERR127304_1_paired.fastq.gz ERR127304_1_unpaired.fastq.gz ERR127304_2_paired.fastq.gz ERR127304_2_unpaired.fastq.gz ILLUMINACLIP:/opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+ILLUMINACLIP: Using adapter file from user-specified absolute path: /opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 31876181 Both Surviving: 26945447 (84.53%) Forward Only Surviving: 3039095 (9.53%) Reverse Only Surviving: 1301609 (4.08%) Dropped: 590030 (1.85%)
+TrimmomaticPE: Completed successfully
+
+--- Trimmomatic Log: results/alignment/ERR127305_trimmomatic.log ---
+TrimmomaticPE: Started with arguments:
+ -threads 4 -phred33 ERR127305_1.fastq.gz ERR127305_2.fastq.gz ERR127305_1_paired.fastq.gz ERR127305_1_unpaired.fastq.gz ERR127305_2_paired.fastq.gz ERR127305_2_unpaired.fastq.gz ILLUMINACLIP:/opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+ILLUMINACLIP: Using adapter file from user-specified absolute path: /opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 32345742 Both Surviving: 28042418 (86.70%) Forward Only Surviving: 2772429 (8.57%) Reverse Only Surviving: 1025964 (3.17%) Dropped: 504931 (1.56%)
+TrimmomaticPE: Completed successfully
+
+================================================================================
+FIRST 15 LINES OF *_hisat2.log IN results/alignment/
+================================================================================
+--- HISAT2 Log: results/alignment/Control_rep1_hisat2.log ---
+55453742 reads; of these:
+  55453742 (100.00%) were paired; of these:
+    5042326 (9.09%) aligned concordantly 0 times
+    47670588 (85.96%) aligned concordantly exactly 1 time
+    2740828 (4.94%) aligned concordantly >1 times
+    ----
+    5042326 pairs aligned concordantly 0 times; of these:
+      593907 (11.78%) aligned discordantly 1 time
+    ----
+    4448419 pairs aligned 0 times concordantly or discordantly; of these:
+      8896838 mates make up the pairs; of these:
+        6081333 (68.35%) aligned 0 times
+        2494312 (28.04%) aligned exactly 1 time
+        321193 (3.61%) aligned >1 times
+94.52% overall alignment rate
+
+--- HISAT2 Log: results/alignment/Control_rep2_hisat2.log ---
+57186429 reads; of these:
+  57186429 (100.00%) were paired; of these:
+    7961233 (13.92%) aligned concordantly 0 times
+    46523036 (81.35%) aligned concordantly exactly 1 time
+    2702160 (4.73%) aligned concordantly >1 times
+    ----
+    7961233 pairs aligned concordantly 0 times; of these:
+      572707 (7.19%) aligned discordantly 1 time
+    ----
+    7388526 pairs aligned 0 times concordantly or discordantly; of these:
+      14777052 mates make up the pairs; of these:
+        12023575 (81.37%) aligned 0 times
+        2438648 (16.50%) aligned exactly 1 time
+        314829 (2.13%) aligned >1 times
+89.49% overall alignment rate
+
+--- HISAT2 Log: results/alignment/ERR127302_hisat2.log ---
+26069721 reads; of these:
+  26069721 (100.00%) were paired; of these:
+    2180057 (8.36%) aligned concordantly 0 times
+    22618412 (86.76%) aligned concordantly exactly 1 time
+    1271252 (4.88%) aligned concordantly >1 times
+    ----
+    2180057 pairs aligned concordantly 0 times; of these:
+      198850 (9.12%) aligned discordantly 1 time
+    ----
+    1981207 pairs aligned 0 times concordantly or discordantly; of these:
+      3962414 mates make up the pairs; of these:
+        2457578 (62.02%) aligned 0 times
+        1343554 (33.91%) aligned exactly 1 time
+        161282 (4.07%) aligned >1 times
+95.29% overall alignment rate
+
+--- HISAT2 Log: results/alignment/ERR127303_hisat2.log ---
+26758217 reads; of these:
+  26758217 (100.00%) were paired; of these:
+    2093997 (7.83%) aligned concordantly 0 times
+    23337319 (87.22%) aligned concordantly exactly 1 time
+    1326901 (4.96%) aligned concordantly >1 times
+    ----
+    2093997 pairs aligned concordantly 0 times; of these:
+      217268 (10.38%) aligned discordantly 1 time
+    ----
+    1876729 pairs aligned 0 times concordantly or discordantly; of these:
+      3753458 mates make up the pairs; of these:
+        2383077 (63.49%) aligned 0 times
+        1214095 (32.35%) aligned exactly 1 time
+        156286 (4.16%) aligned >1 times
+95.55% overall alignment rate
+
+--- HISAT2 Log: results/alignment/ERR127304_hisat2.log ---
+26945447 reads; of these:
+  26945447 (100.00%) were paired; of these:
+    1900143 (7.05%) aligned concordantly 0 times
+    23766666 (88.20%) aligned concordantly exactly 1 time
+    1278638 (4.75%) aligned concordantly >1 times
+    ----
+    1900143 pairs aligned concordantly 0 times; of these:
+      215073 (11.32%) aligned discordantly 1 time
+    ----
+    1685070 pairs aligned 0 times concordantly or discordantly; of these:
+      3370140 mates make up the pairs; of these:
+        2023194 (60.03%) aligned 0 times
+        1200012 (35.61%) aligned exactly 1 time
+        146934 (4.36%) aligned >1 times
+96.25% overall alignment rate
+
+--- HISAT2 Log: results/alignment/ERR127305_hisat2.log ---
+28042418 reads; of these:
+  28042418 (100.00%) were paired; of these:
+    2629192 (9.38%) aligned concordantly 0 times
+    24069052 (85.83%) aligned concordantly exactly 1 time
+    1344174 (4.79%) aligned concordantly >1 times
+    ----
+    2629192 pairs aligned concordantly 0 times; of these:
+      339955 (12.93%) aligned discordantly 1 time
+    ----
+    2289237 pairs aligned 0 times concordantly or discordantly; of these:
+      4578474 mates make up the pairs; of these:
+        2948594 (64.40%) aligned 0 times
+        1441486 (31.48%) aligned exactly 1 time
+        188394 (4.11%) aligned >1 times
+94.74% overall alignment rate
+
+================================================================================
+CONDA SHARE TRIMMOMATIC DIRECTORY NAME IN ADAPTER PATH
+================================================================================
+results/alignment/Control_rep1_trimmomatic.log:ILLUMINACLIP:/opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa:2:30:10
+results/alignment/Control_rep1_trimmomatic.log:ILLUMINACLIP:
+results/alignment/Control_rep1_trimmomatic.log:ILLUMINACLIP:
+results/alignment/Control_rep2_trimmomatic.log:ILLUMINACLIP:/opt/miniforge3/share/trimmomatic-0.41-0/adapters/TruSeq3-PE.fa:2:30:10
+results/alignment/Control_rep2_trimmomatic.log:ILLUMINACLIP:
+
