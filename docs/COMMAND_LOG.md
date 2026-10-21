@@ -569,3 +569,14 @@ Date:   Wed Sep 24 16:04:12 2026 +0200
 
 **Output:** Audit correction logged. Detailed file retention status listed, absence of deletion record documented, metadata overwrite noted, and authentic original mapping assumption preserved verbatim.
 **Dissertation section:** §3.2.1, Appendix A.3
+
+
+### [Audit Correction] Clarification of preliminary outputs retention and retrospective mapping log — 2026-10-21
+**Command:**
+`git log --follow --format='%h %ad %s' --date=iso -- docs/COMMAND_LOG.md` and verification of `results/splicing/`
+**Rationale:**
+Formal reproducibility record clarifying directory contents and log entry timing:
+1. Preliminary differential alternative splicing outputs in `results/splicing/` (from the initial unintentional KD1-vs-KD2 comparison) were not retained in full; only `b1.txt`, `b2.txt`, temporary directory `tmp/`, and preliminary execution logs were preserved on disk.
+2. The log entry headed `[Stage 1 Discovery & Manifest Correction] Sample manifest corrected via ENA sample accession cross-check — 2026-09-22` was committed 2026-09-24 (commit 860b7bb), after the 2026-09-22 discovery, rather than recorded contemporaneously on 2026-09-22.
+**Output:** Audit clarification recorded. Retention status confirmed and retrospective provenance of the 2026-09-22 log entry documented for dissertation examiners.
+**Dissertation section:** §3.2.1, §3.5.1, Appendix A.3
