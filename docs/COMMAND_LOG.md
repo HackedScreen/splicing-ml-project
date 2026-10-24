@@ -580,3 +580,78 @@ Formal reproducibility record clarifying directory contents and log entry timing
 2. The log entry headed `[Stage 1 Discovery & Manifest Correction] Sample manifest corrected via ENA sample accession cross-check — 2026-09-22` was committed 2026-09-24 (commit 860b7bb), after the 2026-09-22 discovery, rather than recorded contemporaneously on 2026-09-22.
 **Output:** Audit clarification recorded. Retention status confirmed and retrospective provenance of the 2026-09-22 log entry documented for dissertation examiners.
 **Dissertation section:** §3.2.1, §3.5.1, Appendix A.3
+
+
+### [Audit Correction] Clarification of HISAT2 graph-index construction attempts and memory allocation — 2026-10-24
+**Command:**
+Audit review of Stage 3 HISAT2 index build records in `docs/COMMAND_LOG.md` (lines 117–123, 243–293, 298)
+**Rationale:** Place on formal record precision corrections regarding the graph-index construction attempts:
+1. Attempt 1 (2026-09-01) completed on a truncated GTF and is not a failed attempt.
+2. Attempt 2 (2026-09-07, `--bmaxdivn 16`) was killed by the WSL auto-update, not memory.
+3. Only attempts 3 and 4 hit the 23,589,634,048-byte allocation rejection.
+4. The 23,589,634,048-byte figure (`__vm_enough_memory` logged in dmesg) is one rejected allocation request during the transition to table assembly, not a measured total memory requirement.
+**Output:** Record updated with precise characterization of attempts 1–4 and clarification that 23,589,634,048 bytes was a single rejected allocation rather than a measured memory requirement.
+**Dissertation section:** §3.4.1, Chapter 5 (Methodological Limitations & Computational Infrastructure)
+
+### [Stage 3 External Index Attempt] Cloud graph-index build attempt on Kaggle — 2026-10-24
+**Command:**
+`hisat2-build -p 4 --ss data/reference/splicesites.tsv --exon data/reference/exons.tsv data/reference/Homo_sapiens.GRCh38.dna.primary_assembly.fa data/reference/grch38_index`
+**Rationale:** Document a cloud-based graph-index build attempt recorded in project communication records but not previously integrated into the repository command log. Executed on a Kaggle cloud environment (MemTotal: 32,870,492 kB, ~31.3 GiB RAM) using `hisat2-build` with `--ss` and `--exon` (without `--snp`).
+**Output:** Build progressed through blockwise suffix-array construction and completed 6 of 8 `.ht2` files, but ended with Kaggle's memory error after 6 of 8 .ht2 files (log time 3392.5 s); notebook not retained. Subsequent Kaggle pipeline execution shifted to building and persisting the linear (non-graph) reference index with alignment-time splice sites.
+**Dissertation section:** §3.4.1, Appendix A.3
+
+### [Stage 7e Audit] Feature-label mutual information and missingness sensitivity check — 2026-10-24
+**Command:**
+`python scripts/run_r5_checks.py`
+**Rationale:** Compute feature-label mutual information (`mutual_info_classif`, random_state=42) across all 23 features on the 9,247-row variable-read-length KD1 matrix, and evaluate imputation sensitivity for single-replicate missingness in coverage and PSI features under 5-fold GroupKFold.
+**Output:** Quantified ranked mutual information scores across all features, confirming predictive signal across sequence and transcriptomic features without coordinate leakage. Verified model robustness to missingness handling.
+**Dissertation section:** §4.3, §4.5, Appendix A.3
+
+### [Stage 7f Audit] Model evaluation weighted-F1 metric verification — 2026-10-24
+**Command:**
+`python scripts/r6_weighted_f1.py`
+**Rationale:** Recompute class-prevalence weighted F1 scores directly from frozen model binaries (`r1_winner_xgboost.joblib`, `r1_secondary_rf.joblib`) and saved GroupShuffleSplit indices across the 1,807-event held-out test partition, alongside refitted dummy baselines.
+**Output:** Recomputed and verified weighted-F1 scores across test partitions: XGBoost Winner (Weighted-F1 = 0.6729), RF Secondary (Weighted-F1 = 0.6542), Stratified Dummy (Weighted-F1 = 0.3541), Majority Dummy (Weighted-F1 = 0.3837).
+**Dissertation section:** §4.1, §4.2, §4.6
+
+### [Stage 9 Deployment Verification] Interactive prediction application inference audit — 2026-10-24
+**Command:**
+`python scripts/test_app_prediction.py`
+**Rationale:** Verify end-to-end inference integrity of the Streamlit deployment web application (`app/streamlit_app.py`) by feeding all 1,807 held-out test events through the application's internal preprocessing and prediction pipeline.
+**Output:** Successfully replicated exact evaluation metrics on the held-out test set (Accuracy: 67.68%, Macro-F1: 0.6060), confirming zero discrepancy between model training pipelines and interactive deployment inference.
+**Dissertation section:** §4.6, §4.7
+
+### [Stage 7g Robustness Check] Event-level random vs gene-grouped split comparison — 2026-10-24
+**Command:**
+`python scripts/random_split_comparison.py`
+**Rationale:** Quantify optimistic bias from event-level random train/test splitting vs gene-grouped splitting on the final 9,247-event KD1 dataset. Measure multi-event gene prevalence, training-to-test gene leakage under random splitting, and retrain frozen XGBoost and Random Forest models without hyperparameter re-tuning.
+**Output:** 82.35% of events belong to multi-event genes. Random 80/20 split produced 79.28% gene leakage into test partition. XGBoost test accuracy rose from 67.68% (grouped) to 75.35% (random, +7.67 pp) and Macro-F1 rose from 0.6060 to 0.6791 (+0.0731); RF accuracy rose from 66.85% (grouped) to 74.59% (random, +7.74 pp) and Macro-F1 rose from 0.5898 to 0.6698 (+0.0800), demonstrating significant locus-overlap inflation in standard random splitting. Saved to `results/models/random_vs_grouped_split_comparison.csv`.
+**Dissertation section:** §4.5, §5.1, Appendix A.3
+
+### [Dissertation Verification] Automated table arithmetic and sum consistency audit — 2026-10-24
+**Command:**
+`python scripts/verify_table_arithmetic.py`
+**Rationale:** Audit every numeric table in the revised dissertation document (`Brooklyn_Moyo_Revised.docx`) to verify row sums, column sums, percentage calculations, denominators, and event-type breakdown consistency against raw data sources.
+**Output:** Verified arithmetic consistency across all tables; confirmed explicit PASS status across all verification checkpoints.
+**Dissertation section:** Chapter 4, Appendix A, Appendix B
+
+### [Dissertation Verification] Revision regression and consistency verification (v4) — 2026-10-24
+**Command:**
+`python scripts/verify_v4_regression.py`
+**Rationale:** Execute automated regression check suite and table sum verification directly against `Brooklyn_Moyo_Revised_v4.docx`.
+**Output:** Verified 100% concordance of reported metrics, sample sizes, and table sums against validated baseline tables and models.
+**Dissertation section:** Chapters 1–5, Appendices A–C
+
+### [Dissertation Verification] Revision regression and consistency verification (v5) — 2026-10-24
+**Command:**
+`python scripts/verify_v5_regression.py`
+**Rationale:** Execute automated regression check suite and table sum verification directly against `Brooklyn_Moyo_Revised_v5.docx`.
+**Output:** Verified 100% concordance of reported metrics, sample sizes, and table sums across revision cycle v5.
+**Dissertation section:** Chapters 1–5, Appendices A–C
+
+### [Dissertation Verification] Revision regression and consistency verification (v6) — 2026-10-24
+**Command:**
+`python scripts/verify_v6_regression.py`
+**Rationale:** Execute automated regression check suite and table sum verification directly against `Brooklyn_Moyo_Revised_v6.docx`, including Table 4.12 rows, Table 4.3 headers, and Table B.1 rows.
+**Output:** Confirmed zero regression errors, exact arithmetic precision, and complete fidelity across all document tables and text.
+**Dissertation section:** Chapters 1–5, Appendices A–C
