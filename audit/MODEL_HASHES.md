@@ -1,5 +1,9 @@
 # Model Checksums & Binary Artifact Audit
 
+> [!IMPORTANT]
+> **Superseding Authoritative Results Notice — 2026-10-25:**
+> The $N=8,693$ / $N=7,080$ results below are superseded. Current results are the variable-read-length run (KD1 $N=9,247$; KD2 $N=7,279$; lane control 3,640 of 119,797) in `results/models/r1_*.csv`.
+
 **Date**: 2026-10-09  
 **Status**: All `.joblib` serialized model and partition files are explicitly excluded from Git version control via `.gitignore` (`*.joblib`) due to GitHub file size limits and binary immutability standards.
 

@@ -3,17 +3,33 @@ app/streamlit_app.py
 
 Interactive Alternative Splicing Classification App
 BSc Dissertation Project: Machine Learning Classification of RNA Splicing Events
-Model: Random Forest V2 Classifier (Biological 23-Feature Architecture with HNRNPC U-Tract Motifs)
+Model: XGBoost Classifier (Biological 23-Feature Architecture with HNRNPC U-Tract Motifs)
 Dataset: HNRNPC Knockdown vs Control in HeLa Cells (ArrayExpress E-MTAB-1147)
 """
 
 import os
 import io
+import sys
 import numpy as np
 import pandas as pd
-import joblib
 import streamlit as st
 import matplotlib.pyplot as plt
+
+# Ensure app directory is importable
+app_dir = os.path.dirname(os.path.abspath(__file__))
+if app_dir not in sys.path:
+    sys.path.insert(0, app_dir)
+
+from predict_core import (
+    predict_events,
+    validate_input_df,
+    load_model,
+    ROBUST_NUMERIC_FEATURES,
+    ALL_MODEL_FEATURES,
+    CANONICAL_CLASSES,
+    CLASS_DESCRIPTIONS,
+    IDX_TO_LABEL
+)
 
 # -----------------------------------------------------------------------------
 # 1. Page Configuration & Custom Theme
@@ -25,41 +41,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Define expected features and mappings (23 Features: 21 numeric + 2 strand dummies)
-ROBUST_NUMERIC_FEATURES = [
-    "exon_length",
-    "gc_exon",
-    "gc_upstream_100bp",
-    "gc_downstream_100bp",
-    "max_utract_length_upstream",
-    "max_utract_length_downstream",
-    "u_fraction_upstream",
-    "u_fraction_downstream",
-    "score_5ss_donor",
-    "score_3ss_acceptor",
-    "cov_mean_control",
-    "cov_var_control",
-    "cov_mean_kd",
-    "cov_var_kd",
-    "cov_mean_overall",
-    "cov_var_overall",
-    "psi_control_mean",
-    "psi_control_var",
-    "psi_kd_mean",
-    "psi_kd_var",
-    "dpsi"
-]
-
-ALL_MODEL_FEATURES = ROBUST_NUMERIC_FEATURES + ["strand_+", "strand_-"]
-
-CLASS_DESCRIPTIONS = {
-    "SE": "Skipped Exon (Cassette Exon)",
-    "RI": "Retained Intron",
-    "A3SS": "Alternative 3' Splice Site",
-    "A5SS": "Alternative 5' Splice Site",
-    "MXE": "Mutually Exclusive Exons"
-}
-
 CLASS_COLORS = {
     "SE": "#2b5c8f",
     "RI": "#d95f02",
@@ -69,39 +50,17 @@ CLASS_COLORS = {
 }
 
 # -----------------------------------------------------------------------------
-# 2. Model Loading (Cached)
+# 2. Model Loading (Cached, No Fallbacks)
 # -----------------------------------------------------------------------------
-CANONICAL_CLASSES = ["A3SS", "A5SS", "MXE", "RI", "SE"]
-IDX_TO_LABEL = {i: c for i, c in enumerate(CANONICAL_CLASSES)}
-
 @st.cache_resource
-def load_robust_model():
-    candidates = [
-        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "models", "r1_winner_xgboost.joblib"),
-        os.path.expanduser("~/splicing-ml-project/results/models/r1_winner_xgboost.joblib"),
-        "results/models/r1_winner_xgboost.joblib",
-        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "models", "random_forest_v2.joblib"),
-        os.path.expanduser("~/splicing-ml-project/results/models/random_forest_v2.joblib"),
-        "results/models/random_forest_v2.joblib",
-        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "models", "random_forest_corrected.joblib"),
-        os.path.expanduser("~/splicing-ml-project/results/models/random_forest_corrected.joblib"),
-        "results/models/random_forest_corrected.joblib"
-    ]
-    for path in candidates:
-        if os.path.exists(path):
-            return joblib.load(path), path
-    raise FileNotFoundError("Could not locate r1_winner_xgboost.joblib or fallback models")
+def get_app_model():
+    return load_model()
 
 try:
-    model, model_path = load_robust_model()
-    if hasattr(model, "classes_") and len(model.classes_) > 0 and isinstance(model.classes_[0], (int, np.integer)):
-        classes = CANONICAL_CLASSES
-        is_integer_model = True
-    else:
-        classes = list(model.classes_)
-        is_integer_model = False
+    model, model_path = get_app_model()
+    classes = CANONICAL_CLASSES
 except Exception as e:
-    st.error(f"Failed to load model: {e}")
+    st.error(f"❌ **Fatal Model Error**: Failed to load winning model `r1_winner_xgboost.joblib`:\n\n`{e}`\n\nFallback models have been strictly removed per protocol.")
     st.stop()
 
 # -----------------------------------------------------------------------------
@@ -112,6 +71,7 @@ with st.sidebar:
     st.title("Splicing ML Classifier")
     st.markdown("**Version:** R1 Protocol (Variable-Read-Length, 23 Features)")
     st.markdown("**Primary Model:** `Winning XGBoost Classifier` (`n_est=300, max_depth=6, lr=0.05`)")
+    st.markdown(f"**Loaded Model Path:**\n`{model_path}`")
     
     st.markdown("---")
     st.subheader("📊 Held-Out Test Metrics ($N=1,807$)")
@@ -146,6 +106,7 @@ with st.sidebar:
 # 4. Main Title & Description
 # -----------------------------------------------------------------------------
 st.title("🧬 RNA Alternative Splicing Event Classifier")
+st.caption(f"🔧 **Active Model File:** `{model_path}`")
 st.markdown(
     "Predict the molecular type of human alternative splicing events (`SE`, `RI`, `A5SS`, `A3SS`, `MXE`) "
     "from sequence composition, HNRNPC U-tract binding motifs, splice site consensus strengths, local RNA-seq read coverage, and $\\Psi$ (PSI) kinetics."
@@ -165,9 +126,9 @@ with tab1:
     # Template generation
     sample_data = {
         "exon_length": [118],
-        "gc_exon": [0.505],
-        "gc_upstream_100bp": [0.44],
-        "gc_downstream_100bp": [0.44],
+        "gc_exon": [54.0],
+        "gc_upstream_100bp": [50.0],
+        "gc_downstream_100bp": [50.0],
         "max_utract_length_upstream": [6],
         "max_utract_length_downstream": [4],
         "u_fraction_upstream": [0.34],
@@ -184,7 +145,7 @@ with tab1:
         "psi_control_var": [0.0003],
         "psi_kd_mean": [0.81],
         "psi_kd_var": [0.0003],
-        "dpsi": [-0.03],
+        "dpsi": [0.03],
         "strand": ["+"]
     }
     template_df = pd.DataFrame(sample_data)
@@ -202,71 +163,45 @@ with tab1:
     if uploaded_file is not None:
         try:
             input_df = pd.read_csv(uploaded_file)
-            st.write(f"Uploaded **{len(input_df)}** rows. Checking required columns...")
+            st.write(f"Uploaded **{len(input_df)}** rows. Validating format and feature schema...")
 
-            required_cols = ROBUST_NUMERIC_FEATURES + ["strand"]
-            missing_cols = [c for c in required_cols if c not in input_df.columns]
+            # Strict batch validation
+            validation_warnings = validate_input_df(input_df)
+            for w in validation_warnings:
+                st.warning(f"⚠️ **Data Warning**: {w}")
 
-            if missing_cols:
-                st.error(
-                    f"❌ **Validation Error**: The uploaded CSV is missing the following required column(s):\n\n"
-                    f"`{missing_cols}`\n\nPlease check the template format above and re-upload."
-                )
-            else:
-                st.success(" All required columns are present! Formatting features for prediction...")
+            st.success("✅ Validation passed! Running predictions via `predict_core` inference engine...")
 
-                # Preprocessing
-                proc_df = input_df.copy()
-                psi_cols = ["psi_control_mean", "psi_control_var", "psi_kd_mean", "psi_kd_var"]
-                proc_df[psi_cols] = proc_df[psi_cols].fillna(0.0)
+            results_df = predict_events(input_df, model=model)
 
-                # Strand one-hot encoding
-                proc_df["strand_+"] = (proc_df["strand"].astype(str).str.strip() == "+").astype(float)
-                proc_df["strand_-"] = (proc_df["strand"].astype(str).str.strip() == "-").astype(float)
-
-                X_batch = proc_df[ALL_MODEL_FEATURES]
-
-                # Prediction
-                raw_preds = model.predict(X_batch)
-                preds = [IDX_TO_LABEL[p] if is_integer_model else p for p in raw_preds]
-                probs = model.predict_proba(X_batch)
-
-                results_df = input_df.copy()
-                results_df["predicted_class"] = preds
-                results_df["predicted_class_name"] = [CLASS_DESCRIPTIONS.get(p, p) for p in preds]
-                results_df["confidence"] = np.max(probs, axis=1)
-
-                for idx, c in enumerate(classes):
-                    results_df[f"prob_{c}"] = probs[:, idx]
-
-                # Check if any predicted as RI
-                ri_predicted_count = (results_df["predicted_class"] == "RI").sum()
-                if ri_predicted_count > 0:
-                    st.warning(
-                        f"⚠️ **Note**: **{ri_predicted_count}** of the {len(results_df)} events were classified as **Retained Intron (RI)**. "
-                        f"RI predictions exhibit an empirical ~73% F1 (vs 77–80% for SE and MXE) due to sequence similarity with continuous coding sequence. "
-                        f"Please verify these loci with independent read-density inspection."
-                    )
-
-                st.dataframe(
-                    results_df[[
-                        "predicted_class", "predicted_class_name", "confidence",
-                        "prob_SE", "prob_RI", "prob_A3SS", "prob_A5SS", "prob_MXE"
-                    ] + [c for c in input_df.columns if c not in ["predicted_class"]]],
-                    use_container_width=True
+            # Check if any predicted as RI
+            ri_predicted_count = (results_df["predicted_class"] == "RI").sum()
+            if ri_predicted_count > 0:
+                st.warning(
+                    f"⚠️ **Note**: **{ri_predicted_count}** of the {len(results_df)} events were classified as **Retained Intron (RI)**. "
+                    f"RI predictions exhibit an empirical ~77% F1 (vs 76–81% for SE and MXE) due to sequence similarity with continuous coding sequence. "
+                    f"Please verify these loci with independent read-density inspection."
                 )
 
-                # Download results
-                res_csv = results_df.to_csv(index=False).encode("utf-8")
-                st.download_button(
-                    label="📥 Download Full Batch Predictions (CSV)",
-                    data=res_csv,
-                    file_name="splicing_predictions_results.csv",
-                    mime="text/csv"
-                )
+            st.dataframe(
+                results_df[[
+                    "predicted_class", "predicted_class_name", "confidence",
+                    "prob_SE", "prob_RI", "prob_A3SS", "prob_A5SS", "prob_MXE"
+                ] + [c for c in input_df.columns if c not in ["predicted_class", "predicted_class_name", "confidence"]]],
+                use_container_width=True
+            )
+
+            # Download results
+            res_csv = results_df.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                label="📥 Download Full Batch Predictions (CSV)",
+                data=res_csv,
+                file_name="splicing_predictions_results.csv",
+                mime="text/csv"
+            )
 
         except Exception as ex:
-            st.error(f"Error processing file: {ex}")
+            st.error(f"❌ **Validation / Prediction Error**: {ex}")
 
 # -----------------------------------------------------------------------------
 # TAB 2: Single Event Explorer
@@ -274,7 +209,7 @@ with tab1:
 with tab2:
     st.subheader("Single Alternative Splicing Event Explorer")
     st.markdown(
-        "Adjust sequence, structural, HNRNPC U-tract motif, coverage, and replicate $\\Psi$ parameters to evaluate how the Random Forest model "
+        "Adjust sequence, structural, HNRNPC U-tract motif, coverage, and replicate $\\Psi$ parameters to evaluate how the winning XGBoost model "
         "classifies the splicing event."
     )
 
@@ -288,10 +223,10 @@ with tab2:
         strand_val = st.selectbox("Genomic Strand", options=["+", "-"], index=0)
 
     with col2:
-        st.markdown("#### 🧬 GC Content Composition")
-        gc_ex = st.slider("Exon GC content (0–1)", min_value=0.0, max_value=1.0, value=0.505, step=0.01)
-        gc_up = st.slider("Upstream 100bp GC (0–1)", min_value=0.05, max_value=0.95, value=0.44, step=0.01)
-        gc_dn = st.slider("Downstream 100bp GC (0–1)", min_value=0.05, max_value=0.95, value=0.44, step=0.01)
+        st.markdown("#### 🧬 GC Content Composition (%)")
+        gc_ex = st.slider("Exon GC percentage (0–100%)", min_value=0.0, max_value=100.0, value=54.0, step=0.5)
+        gc_up = st.slider("Upstream 100bp GC percentage (0–100%)", min_value=0.0, max_value=100.0, value=50.0, step=0.5)
+        gc_dn = st.slider("Downstream 100bp GC percentage (0–100%)", min_value=0.0, max_value=100.0, value=50.0, step=0.5)
 
     with col3:
         st.markdown("#### 🔬 HNRNPC U-Tract Motifs")
@@ -318,7 +253,8 @@ with tab2:
         psi_kd_m = st.slider("Knockdown PSI Mean (0–1)", min_value=0.0, max_value=1.0, value=0.81, step=0.01)
         psi_kd_v = st.number_input("Knockdown PSI Variance", min_value=0.0, max_value=0.5, value=0.0003, format="%.4f")
     with col_p3:
-        delta_psi = st.slider("Delta PSI (dPSI = KD - Control)", min_value=-1.0, max_value=1.0, value=-0.03, step=0.01)
+        delta_psi = psi_ctrl_m - psi_kd_m
+        st.number_input("dPSI = Control - KD", value=float(f"{delta_psi:.4f}"), disabled=True)
         cov_tot_m = (cov_ctrl_m + cov_kd_m) / 2.0
         cov_tot_v = (cov_ctrl_v + cov_kd_v) / 2.0
         st.caption(f"Calculated Overall Coverage Mean: **{cov_tot_m:.2f}**, Variance: **{cov_tot_v:.2f}**")
@@ -346,18 +282,16 @@ with tab2:
             "psi_kd_mean": psi_kd_m,
             "psi_kd_var": psi_kd_v,
             "dpsi": delta_psi,
-            "strand_+": 1.0 if strand_val == "+" else 0.0,
-            "strand_-": 1.0 if strand_val == "-" else 0.0
+            "strand": strand_val
         }
 
-        X_single = pd.DataFrame([single_row])[ALL_MODEL_FEATURES]
-        raw_pred = model.predict(X_single)[0]
-        top_class_pred = IDX_TO_LABEL[raw_pred] if is_integer_model else raw_pred
-        prob_single = model.predict_proba(X_single)[0]
+        single_df = pd.DataFrame([single_row])
+        res_single = predict_events(single_df, model=model)
+        top_class = res_single["predicted_class"].iloc[0]
+        top_p = res_single["confidence"].iloc[0]
 
-        prob_dict = dict(zip(classes, prob_single))
+        prob_dict = {c: res_single[f"prob_{c}"].iloc[0] for c in classes}
         sorted_probs = sorted(prob_dict.items(), key=lambda x: x[1], reverse=True)
-        top_class, top_p = sorted_probs[0]
 
         st.markdown("---")
         st.markdown("### 🎯 Prediction Results")
@@ -377,7 +311,7 @@ with tab2:
                 st.warning(
                     f"⚠️ **Retained Intron Caveat Triggered**:\n\n"
                     f"RI probability is **{ri_prob*100:.1f}%** (within 15% of top call). "
-                    f"Retained Intron events exhibit an empirical **~73% F1** (vs 77–80% for SE and MXE) "
+                    f"Retained Intron events exhibit an empirical **~77% F1** (vs 76–81% for SE and MXE) "
                     f"due to sequence similarity with continuous exons. Treat this call with extra scrutiny."
                 )
 
@@ -400,7 +334,7 @@ with tab2:
             ax.set_yticklabels([f"{c} ({CLASS_DESCRIPTIONS.get(c, '')})" for c in classes], fontsize=9)
             ax.set_xlim(0, 1.15)
             ax.set_xlabel("Predicted Probability", fontsize=10, fontweight="bold")
-            ax.set_title("Random Forest V2 Multi-Class Probabilities", fontsize=11, fontweight="bold", pad=10)
+            ax.set_title("XGBoost Multi-Class Output Probabilities", fontsize=11, fontweight="bold", pad=10)
             plt.tight_layout()
             st.pyplot(fig)
             plt.close()

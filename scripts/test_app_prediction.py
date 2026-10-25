@@ -2,7 +2,8 @@
 """
 scripts/test_app_prediction.py
 
-Tests the app's prediction function on all 1,807 held-out test rows.
+Tests the app's prediction core function (app/predict_core.py::predict_events)
+on all 1,807 held-out test rows.
 Asserts that it reproduces 67.68% accuracy and macro-F1 0.6060.
 Prints the integer-to-label mapping used.
 """
@@ -14,25 +15,37 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import accuracy_score, f1_score
 
-def main():
-    repo_dir = "/home/brooklyn/splicing-ml-project"
-    if os.path.exists(repo_dir):
-        os.chdir(repo_dir)
+# Add repo and app directory to sys.path
+repo_dir = "/home/brooklyn/splicing-ml-project"
+if not os.path.exists(repo_dir):
+    repo_dir = "C:/Users/Brooklyn/Downloads/splicing-ml-project"
+if repo_dir not in sys.path:
+    sys.path.insert(0, repo_dir)
 
+app_dir = os.path.join(repo_dir, "app")
+if app_dir not in sys.path:
+    sys.path.insert(0, app_dir)
+
+os.chdir(repo_dir)
+
+from app.predict_core import (
+    predict_events,
+    load_model,
+    CANONICAL_CLASSES,
+    IDX_TO_LABEL
+)
+
+def main():
     print("=" * 80)
     print("STREAMLIT APP PREDICTION FUNCTION: EVALUATION ON ALL 1,807 HELD-OUT TEST ROWS")
     print("=" * 80)
 
-    # 1. Load model as done by the Streamlit app
-    load_path = "results/models/r1_winner_xgboost.joblib"
-    model = joblib.load(load_path)
+    # 1. Load model via app's predict_core
+    model, load_path = load_model()
     print(f"Loaded Model: {load_path}")
     print(f"Model Class: {type(model)}")
     print(f"Model Classes: {model.classes_}")
 
-    # Canonical classes and mapping
-    CANONICAL_CLASSES = ["A3SS", "A5SS", "MXE", "RI", "SE"]
-    IDX_TO_LABEL = {i: c for i, c in enumerate(CANONICAL_CLASSES)}
     print("\nInteger-to-Label Mapping Used:")
     for idx, lbl in IDX_TO_LABEL.items():
         print(f"  Integer {idx} -> Label '{lbl}'")
@@ -43,37 +56,14 @@ def main():
     print(f"\nNumber of held-out test rows: {len(test_idx):,}")
 
     df_kd1 = pd.read_csv("results/features/feature_matrix_v2.csv")
-
-    # 3. Apply the Streamlit app's exact batch preprocessing pipeline
     input_df = df_kd1.iloc[test_idx].copy()
     y_true = input_df["label"].values
 
-    proc_df = input_df.copy()
-    psi_cols = ["psi_control_mean", "psi_control_var", "psi_kd_mean", "psi_kd_var", "dpsi"]
-    proc_df[psi_cols] = proc_df[psi_cols].fillna(0.0)
+    # 3. Call app/predict_core.py::predict_events
+    results_df = predict_events(input_df, model=model)
+    preds = results_df["predicted_class"].values
 
-    # Strand one-hot encoding exactly as in app
-    proc_df["strand_+"] = (proc_df["strand"].astype(str).str.strip() == "+").astype(float)
-    proc_df["strand_-"] = (proc_df["strand"].astype(str).str.strip() == "-").astype(float)
-
-    feat_23 = [
-        "exon_length", "gc_exon", "gc_upstream_100bp", "gc_downstream_100bp",
-        "max_utract_length_upstream", "max_utract_length_downstream",
-        "u_fraction_upstream", "u_fraction_downstream",
-        "score_5ss_donor", "score_3ss_acceptor",
-        "cov_mean_control", "cov_var_control", "cov_mean_kd", "cov_var_kd",
-        "cov_mean_overall", "cov_var_overall",
-        "psi_control_mean", "psi_control_var", "psi_kd_mean", "psi_kd_var",
-        "dpsi", "strand_+", "strand_-"
-    ]
-    X_batch = proc_df[feat_23]
-
-    # 4. App's prediction logic
-    raw_preds = model.predict(X_batch)
-    preds = [IDX_TO_LABEL[p] for p in raw_preds]
-    probs = model.predict_proba(X_batch)
-
-    # 5. Compute metrics
+    # 4. Compute metrics
     acc = accuracy_score(y_true, preds)
     macro_f1 = f1_score(y_true, preds, average="macro")
 
