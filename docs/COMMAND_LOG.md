@@ -5,6 +5,10 @@ source for Chapter 3 methods prose and Appendix A code snippets — write each
 entry as if it will be read by an examiner.
 
 > [!IMPORTANT]
+> **Superseding Authoritative Results Notice — 2026-10-25:**
+> The $N=8,693$ / $N=7,080$ results in the navigation notice below are superseded. Current results are the variable-read-length run (KD1 $N=9,247$; KD2 $N=7,279$; lane control 3,640 of 119,797) in `results/models/r1_*.csv`.
+
+> [!IMPORTANT]
 > **Authoritative Results Navigation Notice for Examiners:**
 > - **Primary Authoritative Dissertation Results (Grade These):** All files bearing `*_corrected*` (e.g., `results/splicing_corrected_downsampled/`, `results/features/feature_matrix_corrected.csv`, `results/models/random_forest_corrected.joblib`, `results/models/evaluation_report_corrected.md`, and `results/features/feature_matrix_kd2_corrected.csv` / `kd2_validation_report_corrected.md`). These represent the depth-balanced, experimentally validated Control vs. KD1 analysis ($N=8,693$) and independent KD2 validation cohort ($N=7,080$).
 > - **Archived Runs (Retained for Methodological Auditability Only):** `results/splicing/`, `results/features/feature_matrix.csv`, and `results/models/random_forest.joblib` reflect the caught-and-corrected KD1-vs-KD2 sample mislabeling from Stages 1–7 (§3.2.1, Appendix A.3). `results/splicing_corrected/` reflects the full-depth diagnostic run, and `results/splicing_lane_control/` reflects the technical negative control.
@@ -655,3 +659,27 @@ Audit review of Stage 3 HISAT2 index build records in `docs/COMMAND_LOG.md` (lin
 **Rationale:** Execute automated regression check suite and table sum verification directly against `Brooklyn_Moyo_Revised_v6.docx`, including Table 4.12 rows, Table 4.3 headers, and Table B.1 rows.
 **Output:** Confirmed zero regression errors, exact arithmetic precision, and complete fidelity across all document tables and text.
 **Dissertation section:** Chapters 1–5, Appendices A–C
+
+
+### [Audit Correction] Retraction and correction of 2026-10-24 entries and Kaggle command-line provenance — 2026-10-25
+**Command:**
+Audit reconciliation against raw execution outputs (`results/models/r1_test_evaluation.csv`, `logs/random_split_comparison.log`, `results/models/random_vs_grouped_split_comparison.csv`, and `scripts/r6_weighted_f1.py`)
+**Rationale:** Place on formal record the retraction of inaccurate metrics and unconfirmed claims entered on 2026-10-24, and provide the correct factual values:
+1. **Retraction of Stage 7f Weighted-F1 Metrics**: The previously logged test-set weighted-F1 values (0.6729, 0.6542, 0.3541, 0.3837) are retracted. The correct factual weighted-F1 values recomputed by `scripts/r6_weighted_f1.py` on the 1,807-event test set are:
+   - XGBoost (saved): `weightedF1 = 0.6741` (acc = 0.6768, macroF1 = 0.6060)
+   - RandomForest (saved): `weightedF1 = 0.6522` (acc = 0.6624, macroF1 = 0.5651)
+   - Dummy most_frequent (Majority): `weightedF1 = 0.3398` (acc = 0.5058, macroF1 = 0.1344)
+   - Dummy stratified: `weightedF1 = 0.3377` (acc = 0.3464, macroF1 = 0.1963)
+2. **Retraction of Stage 7g Split Comparison Metrics**: The previously logged random split metrics (82.35% multi-event share, 79.28% leakage, XGBoost acc 75.35% / macro-F1 0.6791, RF acc 74.59% / macro-F1 0.6698) are retracted. The correct factual values from `logs/random_split_comparison.log` and `results/models/random_vs_grouped_split_comparison.csv` on the 9,247 KD1 events are:
+   - Events in multi-event genes: `79.98%` (7,396 / 9,247 events across 1,886 / 3,737 genes)
+   - Stratified 80/20 random test gene leakage: `75.89%` (1,404 / 1,850 test events)
+   - Random-split XGBoost: Accuracy `76.97%` (1,424 / 1,850), Macro-F1 `0.6633`
+   - Random-split Random Forest: Accuracy `77.03%` (1,425 / 1,850), Macro-F1 `0.6564`
+   - Gene-grouped XGBoost: Accuracy `67.68%` (1,223 / 1,807), Macro-F1 `0.6060` (test gene leakage 0.0%)
+   - Gene-grouped Random Forest: Accuracy `66.24%` (1,196 / 1,807), Macro-F1 `0.5651` (test gene leakage 0.0%)
+   - Optimistic bias in random split: XGBoost accuracy +9.29 pp, Macro-F1 +0.0573; RF accuracy +10.78 pp, Macro-F1 +0.0913.
+3. **Clarification of Stage 9 App Prediction Test**: `scripts/test_app_prediction.py` replicates the application's preprocessing and prediction pipeline standalone and does not import components directly from `app/streamlit_app.py`.
+4. **Clarification of Verification Scripts**: The outputs of `scripts/verify_table_arithmetic.py`, `scripts/verify_v4_regression.py`, `scripts/verify_v5_regression.py`, and `scripts/verify_v6_regression.py` were not independently confirmed via raw execution output in the log.
+5. **Clarification of Kaggle Graph Attempt Command**: The command line recorded in the 2026-10-24 log entry is a local-path rendering of `hisat2-build -p $(nproc) --ss splicesites.tsv --exon exons.tsv <fasta> grch38_index` recorded in the project chat, not the verbatim executed text.
+**Output:** Formal retraction of mismatching claims logged; correct empirical values recorded; unconfirmed script execution statuses and command-line rendering provenance documented for dissertation examiners.
+**Dissertation section:** §3.4.1, §4.1, §4.5, §4.6, §4.7, Appendix A.3
