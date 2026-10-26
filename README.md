@@ -38,3 +38,41 @@ Requires: `curl`, `wget`, SRA Toolkit (`prefetch`, `fasterq-dump`) on PATH.
 5. Feature engineering
 6. Model training (scikit-learn)
 7. Evaluation
+
+
+## Reproducing the thesis tables
+
+To reproduce the core empirical tables, figures, and interactive model demonstrations reported in the dissertation:
+
+### 1. GroupKFold Cross-Validation Composition (Table 4.2)
+Computes validation event counts and class distributions across all 5 gene-grouped folds (0 shared genes):
+```bash
+python scripts/fold_composition.py
+```
+
+### 2. Primary XGBoost Permutation Feature Importance (Table B.4)
+Computes the mean decrease and sample standard deviation in macro-F1 across 30 random permutations on the 1,807 held-out test events:
+```bash
+python scripts/perm_importance.py
+```
+
+### 3. Dissertation Figures & Confusion Matrices (Figures 4.1–4.5)
+Generates the publication figures, ROC curves, calibration plots, and confusion matrix heatmaps:
+```bash
+python scripts/generate_dissertation_figures.py
+python scripts/generate_confusion_matrices.py
+```
+
+### 4. Interactive Application & Demo Event Validation
+To launch the interactive Streamlit classifier application on Windows:
+```cmd
+run_app.bat
+```
+Alternatively, in any Python environment with Streamlit installed:
+```bash
+streamlit run app/streamlit_app.py
+```
+To validate inference across all five canonical alternative splicing classes (SE, MXE, A3SS, RI, A5SS):
+1. Navigate to the **"Batch Prediction from CSV File"** tab.
+2. Upload `demo/demo_events.csv`.
+3. Verify predicted classifications and probabilities against ground truth in `demo/demo_events_truth.csv` (100% agreement on high-confidence held-out events).

@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 title Splicing ML Classifier - Web App Launcher
 echo ======================================================================
 echo Launching Splicing ML Streamlit App inside WSL2 Ubuntu...
-echo Model: Random Forest Corrected Classifier (74.01% Acc, 0.6474 Macro-F1)
+echo Model: XGBoost Classifier (R1; 67.68% Acc, 0.6060 Macro-F1)
 echo ======================================================================
 echo.
 

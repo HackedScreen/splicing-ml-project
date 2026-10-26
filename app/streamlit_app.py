@@ -83,7 +83,7 @@ with st.sidebar:
     st.subheader("🌐 Second Knockdown Construct (KD2, $N=7,279$)")
     st.markdown("- **KD2 72.73% / 0.666** (majority baseline 61.81% / 0.153)")
     st.markdown("- **Seen genes:** 77.16% vs 62.13% baseline")
-    st.markdown("- **Unseen genes:** (KD2: 64.6% vs 61.2% baseline) (64.60% vs 61.21%)")
+    st.markdown("- **Unseen genes:** (KD2: 64.6% vs 61.2% baseline)")
 
     st.markdown("---")
     st.warning(
@@ -179,7 +179,7 @@ with tab1:
             if ri_predicted_count > 0:
                 st.warning(
                     f"⚠️ **Note**: **{ri_predicted_count}** of the {len(results_df)} events were classified as **Retained Intron (RI)**. "
-                    f"RI predictions exhibit an empirical ~77% F1 (vs 76–81% for SE and MXE) due to sequence similarity with continuous coding sequence. "
+                    f"RI predictions exhibit an empirical ~77% F1 (vs 0.76 for SE and 0.63 for MXE) due to sequence similarity with continuous coding sequence. "
                     f"Please verify these loci with independent read-density inspection."
                 )
 
@@ -311,7 +311,7 @@ with tab2:
                 st.warning(
                     f"⚠️ **Retained Intron Caveat Triggered**:\n\n"
                     f"RI probability is **{ri_prob*100:.1f}%** (within 15% of top call). "
-                    f"Retained Intron events exhibit an empirical **~77% F1** (vs 76–81% for SE and MXE) "
+                    f"Retained Intron events exhibit an empirical **~77% F1** (vs 0.76 for SE and 0.63 for MXE) "
                     f"due to sequence similarity with continuous exons. Treat this call with extra scrutiny."
                 )
 

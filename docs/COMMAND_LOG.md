@@ -683,3 +683,20 @@ Audit reconciliation against raw execution outputs (`results/models/r1_test_eval
 5. **Clarification of Kaggle Graph Attempt Command**: The command line recorded in the 2026-10-24 log entry is a local-path rendering of `hisat2-build -p $(nproc) --ss splicesites.tsv --exon exons.tsv <fasta> grch38_index` recorded in the project chat, not the verbatim executed text.
 **Output:** Formal retraction of mismatching claims logged; correct empirical values recorded; unconfirmed script execution statuses and command-line rendering provenance documented for dissertation examiners.
 **Dissertation section:** §3.4.1, §4.1, §4.5, §4.6, §4.7, Appendix A.3
+
+
+### [Audit Reconciliation] Thesis reproduction verification, RF test accuracy count correction, and viva reproducibility release — 2026-10-26
+**Command:**
+`/opt/miniforge3/envs/splicing_project/bin/python scripts/fold_composition.py && /opt/miniforge3/envs/splicing_project/bin/python scripts/perm_importance.py`
+**Rationale:** Pre-viva reproducibility audit to verify exact numeric concordance between thesis tables (Table 4.2 GroupKFold composition and Table B.4 XGBoost permutation importance) and repository outputs, correct an off-by-one transcription typo in the command log, and document artifact additions:
+1. **Random Forest Correct Test Count Correction**: Re-evaluation of `results/models/r1_secondary_rf.joblib` on the 1,807 held-out test events (`results/models/r1_train_test_data_grouped.joblib`) confirms 1,197 correct predictions out of 1,807 test events (1,197 / 1,807 = 66.2424% ≈ 66.24%, weighted-F1 = 0.6522, macro-F1 = 0.5651). The "1,196 / 1,807" recorded at line 679 of the 2026-10-25 entry was an off-by-one manual transcription typo in the log (1,196 / 1,807 = 66.187% ≠ 66.24%), not a model or pipeline execution discrepancy.
+2. **Table 4.2 GroupKFold Composition Verification**: Verified exact match across all 5 folds for GroupKFold(n_splits=5, shuffle=False) on 7,440 training events across 2,989 unique genes (0 shared genes with validation): Fold 1: 166 A3SS, 71 A5SS, 358 MXE, 83 RI, 810 SE; Fold 2: 137 A3SS, 86 A5SS, 355 MXE, 102 RI, 808 SE; Fold 3: 142 A3SS, 81 A5SS, 433 MXE, 89 RI, 743 SE; Fold 4: 127 A3SS, 79 A5SS, 386 MXE, 80 RI, 816 SE; Fold 5: 134 A3SS, 64 A5SS, 433 MXE, 73 RI, 784 SE.
+3. **Table B.4 Permutation Feature Importance Verification**: Re-computed 30-permutation drop in macro-F1 on the 1,807 test events with `RandomState(42)`. All mean drops and standard deviations match Table B.4 to 4 decimal places: exon_length 0.1936 ± 0.0098; cov_mean_control 0.0710 ± 0.0111; psi_control_mean 0.0645 ± 0.0093; score_5ss_donor 0.0547 ± 0.0088; dpsi 0.0540 ± 0.0066; score_3ss_acceptor 0.0444 ± 0.0054; psi_kd_mean 0.0431 ± 0.0075; cov_mean_kd 0.0429 ± 0.0069; cov_var_control 0.0337 ± 0.0063; max_utract_length_upstream 0.0283 ± 0.0053; Feature Groups: PSI (5) 0.1446 ± 0.0083; Coverage (6) 0.1284 ± 0.0125; PWM (2) 0.0952 ± 0.0078; U-tract (4) 0.0533 ± 0.0067; GC (3) 0.0265 ± 0.0070; Strand (2) 0.0000 ± 0.0021.
+4. **Reproducibility Artifact Additions**:
+   - Tracked scripts: `scripts/perm_importance.py`, `scripts/fold_composition.py`, `scripts/generate_dissertation_figures.py`, and `scripts/generate_confusion_matrices.py`.
+   - Metadata: `data/reference/ena_metadata_2026-10-24.tsv` tracking ArrayExpress E-MTAB-1147 ENA FASTQ accessions (ERR127302–ERR127309).
+   - Environment documentation: `docs/requirements_audited.txt` recording full pinned environment specifications from conda/pip audit.
+   - Interactive validation assets: `demo/demo_events.csv` (6 held-out test events covering all 5 canonical splicing classes) and `demo/demo_events_truth.csv` with 100% concordance under `app/predict_core.py`.
+   - App text fixes: Rectified RI caveat text in `app/streamlit_app.py` and banner header in `run_app.bat`.
+**Output:** Complete numeric verification of thesis tables achieved; RF correct count clarified as 1,197/1,807 (66.24%); reproducibility scripts, ENA metadata, demo dataset, and audited dependencies integrated into repository.
+**Dissertation section:** §3.4, §4.1, §4.5, §4.6, §4.7, Appendix B.4
