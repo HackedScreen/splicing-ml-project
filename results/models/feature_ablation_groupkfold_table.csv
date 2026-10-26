@@ -1,0 +1,4 @@
+Feature_Subset,N_Features,Mean_Accuracy_Pct,Std_Accuracy_Pct,Accuracy_Summary,Mean_Macro_F1,Std_Macro_F1,Macro_F1_Summary
+A_All_23,23,66.88%,0.96%,66.88% ± 0.96%,0.5629,0.0117,0.5629 ± 0.0117
+B_Seq_Struct_Only,12,52.33%,1.32%,52.33% ± 1.32%,0.4598,0.0098,0.4598 ± 0.0098
+C_Cov_PSI_Only,11,57.61%,1.75%,57.61% ± 1.75%,0.3947,0.0185,0.3947 ± 0.0185

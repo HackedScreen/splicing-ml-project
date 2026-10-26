@@ -1,0 +1,111 @@
+=== [R1 Step 2A] Running rMATS: Downsampled Control vs KD1 (--variable-read-length) ===
+Start time: Tue Oct 13 00:13:27 SAST 2026
+gtf: 574.5708680152893
+There are 78941 distinct gene ID in the gtf file
+There are 646577 distinct transcript ID in the gtf file
+There are 43623 one-transcript genes in the gtf file
+There are 5087789 exons in the gtf file
+There are 29034 one-exon transcripts in the gtf file
+There are 24571 one-transcript genes with only one exon in the transcript
+Average number of transcripts per gene is 8.190636
+Average number of exons per transcript is 7.868806
+Average number of exons per transcript excluding one-exon tx is 8.191745
+Average number of gene per geneGroup is 10.556552
+statistic: 0.16554498672485352
+
+read outcome totals across all BAMs
+USED: 167565408
+NOT_PAIRED: 20006433
+NOT_NH_1: 28583808
+NOT_EXPECTED_CIGAR: 257038
+NOT_EXPECTED_READ_LENGTH: 0
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 737041
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 683832
+CLIPPED: 14732156
+total: 232565716
+outcomes by BAM written to: results/splicing_kd1_vrl/tmp/2026-10-13-00_13_29_774980_read_outcomes_by_bam.txt
+
+novel: 1757.5250828266144
+The splicing graph and candidate read have been saved into results/splicing_kd1_vrl/tmp/2026-10-13-00_13_29_774980_*.rmats
+save: 11.39089298248291
+loadsg: 0.20945501327514648
+
+==========
+Done processing each gene from dictionary to compile AS events
+Found 219092 exon skipping events
+Found 45669 exon MX events
+Found 126451 alt SS events
+There are 83126 alt 3 SS events and 43325 alt 5 SS events.
+Found 24606 RI events
+==========
+
+ase: 18.634063959121704
+count: 32.0890748500824
+Processing count files.
+Done processing count files.
+rMATS KD1 completed in 3257 seconds.
+End time: Tue Oct 13 01:07:44 SAST 2026
+
+=======================================================
+rMATS RUN SUMMARY: results/splicing_kd1_vrl
+=======================================================
+
+--- Read Outcomes By BAM ---
+File: results/splicing_kd1_vrl/tmp/2026-10-13-00_13_29_774980_read_outcomes_by_bam.txt
+results/alignment/Control_rep1_downsampled.sorted.bam
+USED: 41651079
+NOT_PAIRED: 4506145
+NOT_NH_1: 7121812
+NOT_EXPECTED_CIGAR: 60957
+NOT_EXPECTED_READ_LENGTH: 0
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 151634
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 169371
+CLIPPED: 3625916
+TOTAL_FOR_BAM: 57286914
+results/alignment/Control_rep2_downsampled.sorted.bam
+USED: 40683403
+NOT_PAIRED: 7255426
+NOT_NH_1: 7071581
+NOT_EXPECTED_CIGAR: 61391
+NOT_EXPECTED_READ_LENGTH: 0
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 148879
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 160785
+CLIPPED: 3520121
+TOTAL_FOR_BAM: 58901586
+results/alignment/ERR127302.sorted.bam
+USED: 41831520
+NOT_PAIRED: 4217328
+NOT_NH_1: 7107583
+NOT_EXPECTED_CIGAR: 62518
+NOT_EXPECTED_READ_LENGTH: 0
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 207053
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 192615
+CLIPPED: 3871218
+TOTAL_FOR_BAM: 57489835
+results/alignment/ERR127303.sorted.bam
+USED: 43399406
+NOT_PAIRED: 4027534
+NOT_NH_1: 7282832
+NOT_EXPECTED_CIGAR: 72172
+NOT_EXPECTED_READ_LENGTH: 0
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 229475
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 161061
+CLIPPED: 3714901
+TOTAL_FOR_BAM: 58887381
+
+
+--- Splicing Events Summary (JC Counts) ---
+EventType        EventTypeDescription  TotalEventsJC  SignificantEventsJC  SigEventsJCSample1HigherInclusion  SigEventsJCSample2HigherInclusion
+       SE                skipped exon          70736                 4875                               2645                               2230
+     A5SS alternative 5' splice sites          18035                  495                                267                                228
+     A3SS alternative 3' splice sites          37571                  922                                411                                511
+      MXE    mutually exclusive exons          21174                 2396                               1331                               1065
+       RI             retained intron          12002                  559                                204                                355
+
+Total Events Tested (JC): 159,518
+Total Significant Events (FDR < 0.05, JC): 9,247 (5.80%)

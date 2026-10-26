@@ -1,0 +1,82 @@
+================================================================================
+ITEM 1: LANE NEGATIVE CONTROL (|dPSI| DISTRIBUTION FOR FDR < 0.05)
+================================================================================
+Total significant calls at FDR < 0.05: 3,741
+|dPSI| Median:     1.0000
+|dPSI| Q1 (25%):   0.7150
+|dPSI| Q3 (75%):   1.0000
+|dPSI| IQR:        0.2850
+|dPSI| Mean ± SD:  0.8379 ± 0.2374
+Share with |dPSI| >= 0.1: 3,711 / 3,741 (99.20%)
+Share with |dPSI| >= 0.5: 3,356 / 3,741 (89.71%)
+Saved histogram to: ./results/models/lane_control_abs_dpsi_histogram.png
+
+================================================================================
+ITEM 2: CLASS COUNTS PER FOLD (5-FOLD GROUPKFOLD) & TRAIN/TEST PARTITIONS
+================================================================================
+
+--- Grouped Train / Test Partitions Class Counts ---
+       Full_Dataset  Train_N  Train_Pct  Test_N  Test_Pct
+label                                                    
+A3SS            786      633       9.18     153      8.50
+A5SS            400      319       4.63      81      4.50
+MXE            2701     2135      30.97     566     31.46
+RI              500      393       5.70     107      5.95
+SE             4306     3414      49.52     892     49.58
+Total Train: 6,894 | Total Test: 1,799
+
+--- 5-Fold GroupKFold Validation Class Counts (Per Fold) ---
+  Fold  Total_Events  Unique_Genes  A3SS  A5SS  MXE  RI  SE
+Fold 1          1739           721   142    68  527 104 898
+Fold 2          1739           722   166    86  530  91 866
+Fold 3          1739           723   175    87  528 115 834
+Fold 4          1738           722   149    94  595  90 810
+Fold 5          1738           722   154    65  521 100 898
+
+================================================================================
+ITEM 3: EXTRA ABLATIONS UNDER 5-FOLD GROUPKFOLD
+================================================================================
+
+Evaluating: (i) All features minus exon_length (22 features)...
+    Fold 1: Acc = 65.90%, Macro-F1 = 0.5133
+    Fold 2: Acc = 61.82%, Macro-F1 = 0.4692
+    Fold 3: Acc = 64.86%, Macro-F1 = 0.5331
+    Fold 4: Acc = 60.36%, Macro-F1 = 0.4659
+    Fold 5: Acc = 64.79%, Macro-F1 = 0.4918
+  -> Mean Accuracy: 63.55% ± 2.34% (ddof=1)
+  -> Mean Macro-F1: 0.4947 ± 0.0288 (ddof=1)
+
+Evaluating: (ii) Sequence-only minus exon_length (11 features)...
+    Fold 1: Acc = 47.44%, Macro-F1 = 0.3348
+    Fold 2: Acc = 46.29%, Macro-F1 = 0.3317
+    Fold 3: Acc = 43.13%, Macro-F1 = 0.3299
+    Fold 4: Acc = 44.59%, Macro-F1 = 0.3226
+    Fold 5: Acc = 46.49%, Macro-F1 = 0.3385
+  -> Mean Accuracy: 45.59% ± 1.72% (ddof=1)
+  -> Mean Macro-F1: 0.3315 ± 0.0060 (ddof=1)
+
+================================================================================
+ITEM 4: DUMMYCLASSIFIER BASELINES ON GROUPED TEST SET (N = 1,799)
+================================================================================
+DummyClassifier (most_frequent): Accuracy = 49.58%, Macro-F1 = 0.1326
+DummyClassifier (stratified):    Accuracy = 35.35%, Macro-F1 = 0.1912
+
+================================================================================
+ITEM 7: TRAIN/TEST COORDINATE OVERLAP DETAILED ANALYSIS
+================================================================================
+Unique coordinate loci in Train: 5,917
+Unique coordinate loci in Test:  1,497
+Overlapping coordinate loci:     2
+
+Overlap Locus: chr11:65318913-65318983(+)
+  Train Events (1):
+    - Event ID: SE_135381, Label: SE, Gene: ENSG00000285816 (nan)
+  Test Events (1):
+    - Event ID: SE_52725, Label: SE, Gene: ENSG00000149798 (CDC42EP2)
+
+Overlap Locus: chr12:53295838-53295941(+)
+  Train Events (2):
+    - Event ID: MXE_9284, Label: MXE, Gene: ENSG00000123349 (PFDN5)
+    - Event ID: MXE_16335, Label: MXE, Gene: ENSG00000123349 (PFDN5)
+  Test Events (1):
+    - Event ID: MXE_9283, Label: MXE, Gene: ENSG00000288663 (nan)

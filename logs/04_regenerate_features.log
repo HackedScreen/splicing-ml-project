@@ -1,0 +1,73 @@
+
+=======================================================
+FEATURE EXTRACTION FOR KD1 Discovery: results/splicing_kd1_vrl
+=======================================================
+
+Opening BAM files for coverage extraction:
+  results/alignment/Control_rep1_downsampled.sorted.bam
+  results/alignment/Control_rep2_downsampled.sorted.bam
+  results/alignment/ERR127302.sorted.bam
+  results/alignment/ERR127303.sorted.bam
+[SE] Total: 70,736 | Significant (FDR < 0.05): 4,875
+  [SE] Progress: 1,000/4,875 (20.5%) | Total extracted: 999
+  [SE] Progress: 2,000/4,875 (41.0%) | Total extracted: 1,999
+  [SE] Progress: 3,000/4,875 (61.5%) | Total extracted: 2,999
+  [SE] Progress: 4,000/4,875 (82.1%) | Total extracted: 3,999
+  [SE] Progress: 4,875/4,875 (100.0%) | Total extracted: 4,874
+[MXE] Total: 21,174 | Significant (FDR < 0.05): 2,396
+  [MXE] Progress: 1,000/2,396 (41.7%) | Total extracted: 5,874
+  [MXE] Progress: 2,000/2,396 (83.5%) | Total extracted: 6,874
+  [MXE] Progress: 2,396/2,396 (100.0%) | Total extracted: 7,270
+[A3SS] Total: 37,571 | Significant (FDR < 0.05): 922
+  [A3SS] Progress: 922/922 (100.0%) | Total extracted: 8,192
+[RI] Total: 12,002 | Significant (FDR < 0.05): 559
+  [RI] Progress: 559/559 (100.0%) | Total extracted: 8,751
+[A5SS] Total: 18,035 | Significant (FDR < 0.05): 495
+  [A5SS] Progress: 495/495 (100.0%) | Total extracted: 9,246
+
+Extracted 9,247 events for KD1 Discovery.
+Class breakdown:
+label
+SE      4875
+MXE     2396
+A3SS     922
+RI       559
+A5SS     495
+Name: count, dtype: int64
+Saved KD1 feature matrix to results/features/feature_matrix_v2.csv (9,247 rows, 31 cols)
+
+=======================================================
+FEATURE EXTRACTION FOR KD2 Validation: results/splicing_kd2_vrl
+=======================================================
+
+Opening BAM files for coverage extraction:
+  results/alignment/Control_rep1_downsampled.sorted.bam
+  results/alignment/Control_rep2_downsampled.sorted.bam
+  results/alignment/ERR127304.sorted.bam
+  results/alignment/ERR127305.sorted.bam
+[SE] Total: 70,594 | Significant (FDR < 0.05): 4,499
+  [SE] Progress: 1,000/4,499 (22.2%) | Total extracted: 999
+  [SE] Progress: 2,000/4,499 (44.5%) | Total extracted: 1,999
+  [SE] Progress: 3,000/4,499 (66.7%) | Total extracted: 2,999
+  [SE] Progress: 4,000/4,499 (88.9%) | Total extracted: 3,999
+  [SE] Progress: 4,499/4,499 (100.0%) | Total extracted: 4,498
+[MXE] Total: 21,272 | Significant (FDR < 0.05): 1,359
+  [MXE] Progress: 1,000/1,359 (73.6%) | Total extracted: 5,498
+  [MXE] Progress: 1,359/1,359 (100.0%) | Total extracted: 5,857
+[A3SS] Total: 37,687 | Significant (FDR < 0.05): 585
+  [A3SS] Progress: 585/585 (100.0%) | Total extracted: 6,442
+[RI] Total: 12,045 | Significant (FDR < 0.05): 456
+  [RI] Progress: 456/456 (100.0%) | Total extracted: 6,898
+[A5SS] Total: 18,159 | Significant (FDR < 0.05): 380
+  [A5SS] Progress: 380/380 (100.0%) | Total extracted: 7,278
+
+Extracted 7,279 events for KD2 Validation.
+Class breakdown:
+label
+SE      4499
+MXE     1359
+A3SS     585
+RI       456
+A5SS     380
+Name: count, dtype: int64
+Saved KD2 feature matrix to results/features/feature_matrix_kd2_v2.csv (7,279 rows, 31 cols)

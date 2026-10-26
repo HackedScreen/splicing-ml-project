@@ -1,0 +1,47 @@
+================================================================================
+1. LANE CONTROL: PER-CLASS UP/DOWN COUNTS & EXACT BINOMIAL TEST
+================================================================================
+Class    Total_FDR<0.05   Up (dPSI>0)    Down (dPSI<0)    Exact Binomial p-value   95% CI              
+--------------------------------------------------------------------------------------------------
+SE       1635             817            818              1.0000                   [0.4752, 0.5242]
+MXE      785              420            365              0.0539                   [0.4994, 0.5704]
+A3SS     648              316            332              0.5557                   [0.4485, 0.5269]
+A5SS     396              219            177              0.0392                   [0.5026, 0.6027]
+RI       277              159            118              0.0161                   [0.5134, 0.6330]
+--------------------------------------------------------------------------------------------------
+Total    3741             1931           1810             0.0498                   [0.5000, 0.5323]
+Saved lane control table to results/models/a2_lane_control_per_class_table.csv
+
+
+================================================================================
+2. A2 ITEM 5: 5-FOLD GROUPKFOLD MODEL COMPARISON (FROZEN HYPERPARAMETERS)
+================================================================================
+
+--- Logistic Regression (V2 23 feats) (n_features = 23) ---
+  Fold 1: Acc = 48.82%, Macro-F1 = 0.4289
+  Fold 2: Acc = 47.73%, Macro-F1 = 0.4099
+  Fold 3: Acc = 48.71%, Macro-F1 = 0.4491
+  Fold 4: Acc = 47.53%, Macro-F1 = 0.3981
+  Fold 5: Acc = 46.26%, Macro-F1 = 0.3982
+  [Summary] Mean Acc: 47.81% ± 1.04% (ddof=1)
+  [Summary] Mean Macro-F1: 0.4168 ± 0.0220 (ddof=1)
+
+--- Random Forest Baseline (19 feats) (n_features = 19) ---
+  Fold 1: Acc = 66.59%, Macro-F1 = 0.5547
+  Fold 2: Acc = 67.05%, Macro-F1 = 0.5720
+  Fold 3: Acc = 66.82%, Macro-F1 = 0.5816
+  Fold 4: Acc = 65.36%, Macro-F1 = 0.5685
+  Fold 5: Acc = 66.00%, Macro-F1 = 0.5609
+  [Summary] Mean Acc: 66.36% ± 0.68% (ddof=1)
+  [Summary] Mean Macro-F1: 0.5675 ± 0.0103 (ddof=1)
+
+--- Random Forest V2 (23 feats) (n_features = 23) ---
+  Fold 1: Acc = 68.03%, Macro-F1 = 0.5627
+  Fold 2: Acc = 65.67%, Macro-F1 = 0.5487
+  Fold 3: Acc = 67.63%, Macro-F1 = 0.5833
+  Fold 4: Acc = 65.82%, Macro-F1 = 0.5650
+  Fold 5: Acc = 67.26%, Macro-F1 = 0.5549
+  [Summary] Mean Acc: 66.88% ± 1.07% (ddof=1)
+  [Summary] Mean Macro-F1: 0.5629 ± 0.0131 (ddof=1)
+
+--- XGBoost V2 (23 feats) (n_features = 23) ---

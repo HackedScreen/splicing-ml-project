@@ -1,0 +1,7 @@
+run_accession,condition,replicate,library_layout,notes
+ERR127302,KD1,1,PAIRED,HNRNPC knockdown construct 1 replicate 1
+ERR127303,KD1,2,PAIRED,HNRNPC knockdown construct 1 replicate 2
+ERR127304,KD2,1,PAIRED,HNRNPC knockdown construct 2 replicate 1 (held out for external validation)
+ERR127305,KD2,2,PAIRED,HNRNPC knockdown construct 2 replicate 2 (held out for external validation)
+Control_rep1,Control,1,PAIRED,ERR127306+ERR127307 concatenated (sample SAMEA1691813, two lanes)
+Control_rep2,Control,2,PAIRED,ERR127308+ERR127309 concatenated (sample SAMEA1691811, two lanes)

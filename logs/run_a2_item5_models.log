@@ -1,0 +1,51 @@
+================================================================================
+A2 ITEM 5: 5-FOLD GROUPKFOLD MODEL COMPARISON (FROZEN HYPERPARAMETERS)
+================================================================================
+
+--- Logistic Regression (V2 23 feats) (n_features = 23) ---
+  Fold 1: Acc = 48.88%, Macro-F1 = 0.4292
+  Fold 2: Acc = 47.73%, Macro-F1 = 0.4099
+  Fold 3: Acc = 48.76%, Macro-F1 = 0.4494
+  Fold 4: Acc = 47.64%, Macro-F1 = 0.3987
+  Fold 5: Acc = 46.20%, Macro-F1 = 0.3976
+  [Summary] Mean Acc: 47.84% ± 1.08% (ddof=1)
+  [Summary] Mean Macro-F1: 0.4169 ± 0.0222 (ddof=1)
+
+--- Random Forest Baseline (19 feats) (n_features = 19) ---
+  Fold 1: Acc = 66.59%, Macro-F1 = 0.5547
+  Fold 2: Acc = 67.05%, Macro-F1 = 0.5720
+  Fold 3: Acc = 66.82%, Macro-F1 = 0.5816
+  Fold 4: Acc = 65.36%, Macro-F1 = 0.5685
+  Fold 5: Acc = 66.00%, Macro-F1 = 0.5609
+  [Summary] Mean Acc: 66.36% ± 0.68% (ddof=1)
+  [Summary] Mean Macro-F1: 0.5675 ± 0.0103 (ddof=1)
+
+--- Random Forest V2 (23 feats) (n_features = 23) ---
+  Fold 1: Acc = 68.03%, Macro-F1 = 0.5627
+  Fold 2: Acc = 65.67%, Macro-F1 = 0.5487
+  Fold 3: Acc = 67.63%, Macro-F1 = 0.5833
+  Fold 4: Acc = 65.82%, Macro-F1 = 0.5650
+  Fold 5: Acc = 67.26%, Macro-F1 = 0.5549
+  [Summary] Mean Acc: 66.88% ± 1.07% (ddof=1)
+  [Summary] Mean Macro-F1: 0.5629 ± 0.0131 (ddof=1)
+
+--- XGBoost V2 (23 feats) (n_features = 23) ---
+  Fold 1: Acc = 68.14%, Macro-F1 = 0.5735
+  Fold 2: Acc = 66.71%, Macro-F1 = 0.5867
+  Fold 3: Acc = 68.72%, Macro-F1 = 0.6114
+  Fold 4: Acc = 65.25%, Macro-F1 = 0.5675
+  Fold 5: Acc = 67.49%, Macro-F1 = 0.5802
+  [Summary] Mean Acc: 67.26% ± 1.35% (ddof=1)
+  [Summary] Mean Macro-F1: 0.5838 ± 0.0170 (ddof=1)
+
+--- Random Forest MaxEntScan (23 feats) (n_features = 23) ---
+  Fold 1: Acc = 70.96%, Macro-F1 = 0.5482
+  Fold 2: Acc = 67.34%, Macro-F1 = 0.5171
+  Fold 3: Acc = 68.03%, Macro-F1 = 0.5366
+  Fold 4: Acc = 66.51%, Macro-F1 = 0.5384
+  Fold 5: Acc = 69.33%, Macro-F1 = 0.5430
+  [Summary] Mean Acc: 68.43% ± 1.75% (ddof=1)
+  [Summary] Mean Macro-F1: 0.5366 ± 0.0118 (ddof=1)
+
+Saved 5-fold GroupKFold model comparison to results/models/a2_item5_groupkfold_model_comparison.csv
+Saved markdown comparison to results/models/a2_item5_groupkfold_model_comparison.md

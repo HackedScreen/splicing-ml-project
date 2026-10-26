@@ -1,0 +1,224 @@
+================================================================================
+R1 MODEL PROTOCOL & SUPERVISOR BATTERY EXECUTION
+================================================================================
+Loading KD1 feature matrix: results/features/feature_matrix_v2.csv
+Loaded KD1: 9,247 events across 3,737 unique genes.
+Loading KD2 feature matrix: results/features/feature_matrix_kd2_v2.csv
+Loaded KD2: 7,279 events across 3,104 unique genes.
+
+----------------------------------------------------------------------
+1. EXECUTING GENE-GROUPED SPLIT (GroupShuffleSplit, 80/20, seed=42)
+----------------------------------------------------------------------
+Train events: 7,440 (80.46%) across 2,989 genes
+Test events:  1,807 (19.54%) across 748 genes
+Gene overlap between Train and Test: 0 (STRICTLY ZERO)
+
+----------------------------------------------------------------------
+2. HYPERPARAMETER TUNING VIA 5-FOLD GroupKFold ON TRAINING GROUPS ONLY
+----------------------------------------------------------------------
+Loading cached cross-validation tuning results from results/models/r1_cv_model_tuning.csv...
+  [XGB] n_est=300, max_depth=6, lr=0.05: Acc = 66.94% ± 1.30%, Macro-F1 = 0.5832 ± 0.0187 (ddof=1)
+  [XGB] n_est=300, max_depth=6, lr=0.1: Acc = 68.35% ± 1.11%, Macro-F1 = 0.5827 ± 0.0158 (ddof=1)
+  [Ran] n_est=100, max_depth=None: Acc = 67.58% ± 2.04%, Macro-F1 = 0.5788 ± 0.0265 (ddof=1)
+  [Ran] n_est=300, max_depth=None: Acc = 67.70% ± 1.91%, Macro-F1 = 0.5766 ± 0.0282 (ddof=1)
+  [Ran] n_est=300, max_depth=20: Acc = 67.45% ± 1.67%, Macro-F1 = 0.5762 ± 0.0294 (ddof=1)
+  [XGB] n_est=100, max_depth=6, lr=0.1: Acc = 65.60% ± 1.34%, Macro-F1 = 0.5758 ± 0.0186 (ddof=1)
+  [XGB] n_est=300, max_depth=3, lr=0.1: Acc = 64.50% ± 1.28%, Macro-F1 = 0.5745 ± 0.0204 (ddof=1)
+  [Ran] n_est=100, max_depth=20: Acc = 66.88% ± 1.83%, Macro-F1 = 0.5690 ± 0.0247 (ddof=1)
+  [XGB] n_est=100, max_depth=6, lr=0.05: Acc = 63.84% ± 0.95%, Macro-F1 = 0.5675 ± 0.0226 (ddof=1)
+  [Ran] n_est=300, max_depth=10: Acc = 63.90% ± 1.80%, Macro-F1 = 0.5576 ± 0.0225 (ddof=1)
+  [XGB] n_est=300, max_depth=3, lr=0.05: Acc = 62.58% ± 0.73%, Macro-F1 = 0.5565 ± 0.0176 (ddof=1)
+  [Ran] n_est=100, max_depth=10: Acc = 63.41% ± 1.53%, Macro-F1 = 0.5527 ± 0.0229 (ddof=1)
+  [XGB] n_est=100, max_depth=3, lr=0.1: Acc = 60.73% ± 0.83%, Macro-F1 = 0.5402 ± 0.0195 (ddof=1)
+  [XGB] n_est=100, max_depth=3, lr=0.05: Acc = 57.73% ± 2.19%, Macro-F1 = 0.5072 ± 0.0309 (ddof=1)
+
+WINNER (highest grouped-CV Macro-F1): XGBoost (n_est=300, max_depth=6, lr=0.05) with Macro-F1 = 0.5832 ± 0.0187
+RUNNER-UP (best of alternate family): RandomForest (n_est=100, max_depth=None) with Macro-F1 = 0.5788 ± 0.0265
+
+----------------------------------------------------------------------
+3. EVALUATION ON HELD-OUT GROUPED TEST SET (N = 1,799)
+----------------------------------------------------------------------
+
+[WINNER] XGBoost Test Accuracy: 67.68%, Test Macro-F1: 0.6060
+[SECONDARY] RandomForest Test Accuracy: 66.24%, Test Macro-F1: 0.5651
+
+Winner Classification Report (Test Set):
+              precision    recall  f1-score   support
+
+        A3SS     0.5473    0.5093    0.5276       216
+        A5SS     0.3956    0.3158    0.3512       114
+         MXE     0.6088    0.6427    0.6253       431
+          RI     0.6909    0.8636    0.7677       132
+          SE     0.7665    0.7505    0.7584       914
+
+    accuracy                         0.6768      1807
+   macro avg     0.6018    0.6164    0.6060      1807
+weighted avg     0.6737    0.6768    0.6741      1807
+
+
+----------------------------------------------------------------------
+4. EXTERNAL VALIDATION ON INDEPENDENT KD2 COHORT
+----------------------------------------------------------------------
+
+--- Full KD2 Cohort (N = 7,279, 100.00%) ---
+  Model Accuracy: 72.73%, Model Macro-F1: 0.6660
+  Majority Baseline (SE): Acc = 61.81%, Macro-F1 = 0.1528
+    F1 (A3SS): 0.5477
+    F1 (A5SS): 0.5697
+    F1 (MXE): 0.5932
+    F1 (RI): 0.8138
+    F1 (SE): 0.8056
+
+--- Seen-Gene Stratum (in KD1 Train) (N = 4,711, 64.72%) ---
+  Model Accuracy: 77.16%, Model Macro-F1: 0.7233
+  Majority Baseline (SE): Acc = 62.13%, Macro-F1 = 0.1533
+    F1 (A3SS): 0.6186
+    F1 (A5SS): 0.6445
+    F1 (MXE): 0.6621
+    F1 (RI): 0.8545
+    F1 (SE): 0.8366
+
+--- Unseen-Gene Stratum (Absent from KD1 Train) (N = 2,568, 35.28%) ---
+  Model Accuracy: 64.60%, Model Macro-F1: 0.5663
+  Majority Baseline (SE): Acc = 61.21%, Macro-F1 = 0.1519
+    F1 (A3SS): 0.4427
+    F1 (A5SS): 0.4384
+    F1 (MXE): 0.4378
+    F1 (RI): 0.7656
+    F1 (SE): 0.7472
+
+----------------------------------------------------------------------
+5. SUPERVISOR ROBUSTNESS BATTERY
+----------------------------------------------------------------------
+
+[A] Running 1,000 Gene-Level Bootstrap Resamples on Test Set...
+Loading cached bootstrap confidence intervals from results/models/r1_bootstrap_ci.csv...
+          Metric Point_Estimate Bootstrap_Mean Bootstrap_SD CI_95_Lower CI_95_Upper     CI_95_String
+Overall Accuracy         67.68%         67.69%        1.24%      65.25%      70.09% [65.25%, 70.09%]
+        Macro-F1         0.6060         0.6051       0.0172      0.5703      0.6382 [0.5703, 0.6382]
+ F1-Score (A3SS)         0.5276         0.5262       0.0321      0.4563      0.5842 [0.4563, 0.5842]
+ F1-Score (A5SS)         0.3512         0.3488       0.0580      0.2404      0.4610 [0.2404, 0.4610]
+  F1-Score (MXE)         0.6253         0.6253       0.0237      0.5786      0.6719 [0.5786, 0.6719]
+   F1-Score (RI)         0.7677         0.7671       0.0300      0.7025      0.8197 [0.7025, 0.8197]
+   F1-Score (SE)         0.7584         0.7582       0.0137      0.7306      0.7831 [0.7306, 0.7831]
+
+[B] Probability Calibration Assessment...
+Loading cached calibration results from results/models/r1_calibration.csv...
+                           Model  Multiclass_Brier_Score  Accuracy  Macro_F1
+             Uncalibrated Winner                0.449933  0.676812  0.606037
+CalibratedClassifierCV (Sigmoid)                0.435433  0.697288  0.584443
+
+[C] Feature Ablation Battery under 5-Fold GroupKFold (Full Dataset)...
+Loading cached feature ablations from results/models/r1_feature_ablations.csv...
+  (A) All 23 Features (N=23): Acc = 66.97% ± 0.80% (ddof=1), Macro-F1 = 0.5879 ± 0.0124 (ddof=1)
+  (B) All minus exon_length (N=22): Acc = 62.61% ± 0.71% (ddof=1), Macro-F1 = 0.5073 ± 0.0133 (ddof=1)
+  (C) Sequence/Structure Only (12 feats) (N=12): Acc = 48.11% ± 0.86% (ddof=1), Macro-F1 = 0.4367 ± 0.0170 (ddof=1)
+  (D) Sequence/Structure minus exon_length (11 feats) (N=11): Acc = 37.79% ± 1.40% (ddof=1), Macro-F1 = 0.2964 ± 0.0164 (ddof=1)
+  (E) Coverage/PSI Only (11 feats) (N=11): Acc = 54.85% ± 1.17% (ddof=1), Macro-F1 = 0.4105 ± 0.0043 (ddof=1)
+
+[D] Information Leakage Diagnostics...
+Loading cached mutual information from results/models/r1_mutual_information.csv...
+Top 10 Features by Mutual Information:
+           Feature  Mutual_Information  Rank
+  cov_mean_control            0.204009     1
+       exon_length            0.196038     2
+       cov_mean_kd            0.195923     3
+  cov_mean_overall            0.192187     4
+   cov_var_overall            0.179324     5
+   cov_var_control            0.178631     6
+        cov_var_kd            0.159750     7
+score_3ss_acceptor            0.123553     8
+   score_5ss_donor            0.109661     9
+  psi_control_mean            0.092834    10
+
+Exact duplicate feature rows in KD1: 58
+
+[E] Duplicates and Overlap Analysis...
+Coordinate loci appearing with DIFFERENT splicing classes: 430
+Events with identical coordinates across classes: 1161
+
+Outer Genomic Interval Overlap (Test vs Train):
+  - Test events overlapping train: 10 (0.55%)
+  - Test events NOT overlapping train: 1797 (99.45%)
+
+Stratum: With Outer Overlap (N = 10):
+  Accuracy: 60.00%, Macro-F1: 0.5893
+    - A3SS: N=5, F1=0.5000
+    - A5SS: N=1, F1=1.0000
+    - MXE: N=4, F1=0.8571
+    - RI: N=0, F1=0.0000
+    - SE: N=0, F1=0.0000
+
+Stratum: Without Outer Overlap (N = 1797):
+  Accuracy: 67.72%, Macro-F1: 0.6047
+    - A3SS: N=211, F1=0.5281
+    - A5SS: N=113, F1=0.3448
+    - MXE: N=427, F1=0.6234
+    - RI: N=132, F1=0.7677
+    - SE: N=914, F1=0.7597
+
+[F] Technical Negative Control (Lane Comparison)...
+event_class  total_fdr_under_0_05  up_dpsi_gt_0  down_dpsi_lt_0  exact_binomial_p  ci_95_low  ci_95_high
+         SE                  1588           806             782          0.563839   0.482658    0.532427
+        MXE                   813           434             379          0.058177   0.498850    0.568555
+       A3SS                   625           312             313          1.000000   0.459284    0.539124
+       A5SS                   366           197             169          0.158059   0.485678    0.590201
+         RI                   248           142             106          0.026050   0.508436    0.634969
+      Total                  3640          1891            1749          0.019424   0.503127    0.535852
+
+Lane Control |dPSI| Distribution (N = 3,640):
+  Min: 0.0200
+  25%: 0.7370
+  Median: 1.0000
+  75%: 1.0000
+  IQR: 0.2630
+  90%: 1.0000
+  95%: 1.0000
+  Max: 1.0000
+  Mean ± SD: 0.8412 ± 0.2362 (ddof=1)
+  Share with |dPSI| >= 0.1: 99.18%
+  Share with |dPSI| >= 0.5: 89.73%
+Saved Lane Control |dPSI| Histogram: results/models/r1_lane_control_abs_dpsi_histogram.png
+
+Junction Count Distribution Comparison:
+                                   Cohort  N_Events  Median_Junction_Reads  Q25_Junction_Reads  Q75_Junction_Reads  IQR_Junction_Reads  Mean_Junction_Reads  Std_Junction_Reads
+    Lane Control (ERR127306 vs ERR127307)      3640                    4.0                 2.0                 8.0                 6.0            26.550000          244.093665
+KD1 Discovery (KD vs Downsampled Control)      9247                  179.0                40.0               695.5               655.5          1288.834649         5655.632344
+
+[F] Dummy Classifier Baselines on Held-Out Test Set...
+
+--- DummyClassifier strategy='most_frequent' ---
+  Accuracy: 50.58%, Macro-F1: 0.1344
+              precision    recall  f1-score   support
+
+        A3SS     0.0000    0.0000    0.0000       216
+        A5SS     0.0000    0.0000    0.0000       114
+         MXE     0.0000    0.0000    0.0000       431
+          RI     0.0000    0.0000    0.0000       132
+          SE     0.5058    1.0000    0.6718       914
+
+    accuracy                         0.5058      1807
+   macro avg     0.1012    0.2000    0.1344      1807
+weighted avg     0.2558    0.5058    0.3398      1807
+
+
+--- DummyClassifier strategy='stratified' ---
+  Accuracy: 34.64%, Macro-F1: 0.1963
+              precision    recall  f1-score   support
+
+        A3SS     0.1515    0.1157    0.1312       216
+        A5SS     0.0377    0.0351    0.0364       114
+         MXE     0.2096    0.2227    0.2160       431
+          RI     0.0947    0.0682    0.0793       132
+          SE     0.5005    0.5383    0.5187       914
+
+    accuracy                         0.3464      1807
+   macro avg     0.1988    0.1960    0.1963      1807
+weighted avg     0.3306    0.3464    0.3377      1807
+
+
+Saved models: results/models/r1_winner_xgboost.joblib, results/models/r1_secondary_rf.joblib
+
+================================================================================
+R1 PROTOCOL & SUPERVISOR BATTERY COMPLETED SUCCESSFULLY
+================================================================================

@@ -1,0 +1,49 @@
+=== [Robustness Check] Running rMATS-turbo (Downsampled Control vs KD1) ===
+Start time: Tue Sep 22 23:42:25 SAST 2026
+gtf: 262.8866219520569
+There are 78941 distinct gene ID in the gtf file
+There are 646577 distinct transcript ID in the gtf file
+There are 43623 one-transcript genes in the gtf file
+There are 5087789 exons in the gtf file
+There are 29034 one-exon transcripts in the gtf file
+There are 24571 one-transcript genes with only one exon in the transcript
+Average number of transcripts per gene is 8.190636
+Average number of exons per transcript is 7.868806
+Average number of exons per transcript excluding one-exon tx is 8.191745
+Average number of gene per geneGroup is 10.556552
+statistic: 0.13506221771240234
+
+read outcome totals across all BAMs
+USED: 135480868
+NOT_PAIRED: 20006433
+NOT_NH_1: 28583808
+NOT_EXPECTED_CIGAR: 257038
+NOT_EXPECTED_READ_LENGTH: 32340083
+NOT_EXPECTED_STRAND: 0
+EXON_NOT_MATCHED_TO_ANNOTATION: 610799
+JUNCTION_NOT_MATCHED_TO_ANNOTATION: 554531
+CLIPPED: 14732156
+total: 232565716
+outcomes by BAM written to: results/splicing_corrected_downsampled/tmp/2026-09-22-23_42_27_781222_read_outcomes_by_bam.txt
+
+novel: 1663.6572308540344
+The splicing graph and candidate read have been saved into results/splicing_corrected_downsampled/tmp/2026-09-22-23_42_27_781222_*.rmats
+save: 19.287685871124268
+loadsg: 0.8792941570281982
+
+==========
+Done processing each gene from dictionary to compile AS events
+Found 218098 exon skipping events
+Found 45389 exon MX events
+Found 126325 alt SS events
+There are 83055 alt 3 SS events and 43270 alt 5 SS events.
+Found 24592 RI events
+==========
+
+ase: 39.48529577255249
+count: 47.15959644317627
+Processing count files.
+Done processing count files.
+=== rMATS execution completed ===
+End time: Wed Sep 23 00:32:50 SAST 2026
+Total Wall Time: 3025 seconds

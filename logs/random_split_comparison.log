@@ -1,0 +1,47 @@
+================================================================================
+RANDOM-SPLIT VS GENE-GROUPED COMPARISON ON CURRENT DATA (KD1: 9,247 EVENTS)
+================================================================================
+Total KD1 events: 9,247
+Unique genes:     3,737
+
+------------------------------------------------------------
+GENE REDUNDANCY & MULTI-EVENT GENE STATISTICS:
+------------------------------------------------------------
+Number of multi-event genes (>1 event): 1,886 / 3,737 (50.47%)
+Events located in multi-event genes:    7,396 / 9,247 (79.98%)
+
+------------------------------------------------------------
+STRATIFIED 80/20 RANDOM SPLIT (random_state=42):
+------------------------------------------------------------
+Training events: 7,397 (80.00%) across 3,326 unique genes
+Testing events:  1,850 (20.00%) across 1,346 unique genes
+Test events with gene also in training (Gene Leakage): 1,404 / 1,850 (75.89%)
+Shared genes between train and test: 935 genes
+
+------------------------------------------------------------
+TRAINING XGBOOST ON RANDOM SPLIT:
+------------------------------------------------------------
+XGBoost Random-Split Accuracy: 76.97% (0.7697)
+XGBoost Random-Split Macro-F1: 0.6633
+
+------------------------------------------------------------
+TRAINING RANDOM FOREST ON RANDOM SPLIT:
+------------------------------------------------------------
+Random Forest Random-Split Accuracy: 77.03% (0.7703)
+Random Forest Random-Split Macro-F1: 0.6564
+
+================================================================================
+COMPARISON: RANDOM SPLIT VS GENE-GROUPED SPLIT
+================================================================================
+Split Scheme         | Model           | Test Acc   | Macro-F1   | Test Gene Leakage 
+--------------------------------------------------------------------------------
+Random (80/20)       | XGBoost         | 76.97%     | 0.6633     | 75.89% (1404/1850)
+Random (80/20)       | Random Forest   | 77.03%     | 0.6564     | 75.89% (1404/1850)
+Gene-Grouped         | XGBoost         | 67.68%     | 0.6060     | 0.00% (0/1807)
+Gene-Grouped         | Random Forest   | 66.24%     | 0.5651     | 0.00% (0/1807)
+--------------------------------------------------------------------------------
+Optimistic Bias in Random Split (XGBoost): Accuracy +9.29 pp, Macro-F1 +0.0573
+Optimistic Bias in Random Split (RF):      Accuracy +10.78 pp, Macro-F1 +0.0913
+================================================================================
+
+Saved comparison CSV to: results/models/random_vs_grouped_split_comparison.csv
